@@ -1,4 +1,17 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>.jd-sn{color:#8a2f4a!important;font-style:italic}
+.sty{display:grid;gap:10px}
+.sty-post{max-width:420px;background:#121212;color:#eee;border-radius:16px;padding:12px 14px;font:12.5px/1.5 system-ui,sans-serif;box-shadow:0 4px 14px #0004}
+.sty-app{text-align:center;font-weight:700;color:#e0476b;margin-bottom:6px}
+.sty-au{font-weight:700}
+.sty-ph{margin:6px 0;padding:8px 10px;border-radius:8px;background:#0a0a0a;color:#aaa;font-style:italic;font-size:12px}
+.sty-cap{margin:4px 0 6px}
+.sty-cm{border-top:1px solid #333;padding-top:6px;display:grid;gap:4px}
+.sty-cm span{opacity:.6;font-size:11px}
+.sty-lk{margin-top:6px;opacity:.7;font-size:12px}
+.sty-gm{background:#FCF9F1;border:1px dashed #C7343F66;border-radius:8px;padding:8px 12px;display:grid;gap:4px;font-size:13px;color:#2B3D73}
+.sty-gm b{color:#C7343F}
+.sty-gm i{display:inline-block;min-width:52px;margin-right:6px;font-style:normal;font-size:11px;color:#C7343F;text-transform:uppercase;letter-spacing:.04em}
+</style></head><body>
 <script>
 /* Хранилище компаньона внутри SillyTavern: вместо db/assets артефакта claude.ai.
    Данные: user/files/companion-db.json (+ копия за день), картинки: user/images/companion/. */
@@ -4388,7 +4401,7 @@ const ui = (() => { let d = {}; try { d = JSON.parse(localStorage.getItem(LS) ||
 const saveUi = () => { try { localStorage.setItem(LS, JSON.stringify(ui)); } catch (e) { /* без запоминания */ } };
 
 /* ---------- данные ---------- */
-const D = { scenarios: [], heroines: [], prompts: [], images: [], presets: [], caldays: [] };
+const D = { scenarios: [], heroines: [], prompts: [], images: [], presets: [], caldays: [], stories: [] };
 const loaded = {};
 let db = null, assets = null, downloads = null, mode = 'connecting';
 const scen = () => D.scenarios.find(s => s.id === ui.scenId) || D.scenarios[0] || null;
@@ -4783,7 +4796,7 @@ function renderWeek(s, hs) {
       '<span class="pol" style="--rot:' + rot + 'deg">' + (d.her.some(h => { const p = phaseAt(s, h, d.o); return p && p.k === 'ovu'; }) ? '<em class="stk dk" title="Дежурная в овуляции">危険日</em>' : '') + (hs.some(h => (h.tests || []).some(x => x.pos && x.at === d.k)) ? '<em class="stk hit" title="Тест положительный">命中</em>' : '') + '<span class="ph' + (im ? '' : ' empty') + '">' + (im ? '<img alt="" loading="lazy" src="' + thumbSrc(im) + '">' : d.her.length ? '<b>＋</b>вклеить кадр' : '<span class="jd-wd">' + WDJ[d.wd] + '</span>') + '</span>' + gradeHtml(d.x.rate) + '</span>' +
       '<span class="jd-hs">' + (d.her.length ? d.her.map(h => { const p = phaseAt(s, h, d.o); return '<span class="jd-h">' + hanko(h) + '<span>' + esc(h.nick || h.name) + '</span>' + (isPreg(h) && p && p.k === 'preg' ? ik('preg') : p && (p.k === 'ovu' || p.k === 'men') ? ik(p.k) : '') + '</span>'; }).join('') : '<span class="jd-free">' + (st === 'past' ? 'пропуск' : 'не назначена') + '</span>') + '</span>' +
       (d.bd.length ? '<span class="jd-bd">' + ik('bd') + ' ' + d.bd.map(h => esc(h.nick || h.name)).join(', ') + '</span>' : '') +
-      (d.x.note ? '<span class="jd-n">' + esc(d.x.note) + '</span>' : '') + '</button>';
+      (d.x.note ? '<span class="jd-n">' + esc(d.x.note) + '</span>' : storyNote(s, d.k)) + '</button>';
   }).join('');
   const nav = '<div class="wk-nav"><button type="button" class="btn ghost" data-calw="' + (w0 - 7) + '" aria-label="Предыдущая неделя"' + (w0 - 7 <= -7 ? ' disabled' : '') + '>‹</button><b>' + (wn >= 1 ? 'Неделя ' + wn : '—') + '</b><button type="button" class="btn ghost" data-calw="' + (w0 + 7) + '" aria-label="Следующая неделя"' + (w0 + 7 >= N ? ' disabled' : '') + '>›</button>' +
     (tOrd >= 0 && !inW(tOrd) ? '<button type="button" class="btn ghost" data-calw="' + (tOrd - wdOf(s, tOrd)) + '">к сегодня</button>' : '') + '</div>';
@@ -4835,7 +4848,7 @@ function drawCalDay() {
     '<div class="fld"><span class="lab">Оценка дня' + (calEd.rate ? ' · ' + calEd.rate + ' из 5' : '') + '</span><div class="stars" role="group" aria-label="Оценка дня от 1 до 5">' + [1, 2, 3, 4, 5].map(i => '<button type="button" data-cdr="' + i + '" aria-label="' + i + '" aria-pressed="' + (calEd.rate === i) + '" class="' + (i <= calEd.rate ? 'on' : '') + '">★</button>').join('') + '</div></div>' +
     (() => { const fr = calEd.frame && D.images.find(i => i.id === calEd.frame), pk = D.images.filter(i => i.kind !== 'card').slice().sort((a, b) => ((calEd.her.includes(b.heroineId)) - (calEd.her.includes(a.heroineId))) || byNew(a, b)).slice(0, 40);
       return '<div class="fld"><span class="lab">Кадр дня · трофей</span><div class="cd-fr">' + (fr ? '<div class="cur"><img alt="" src="' + thumbSrc(fr) + '"></div>' : '<div class="cur empty">♡</div>') + '<div style="display:grid;gap:6px;flex:1 1 220px;min-width:0"><div class="row">' + (assets ? '<button class="btn" data-act="cd-fr-up"' + (calEd.busy ? ' disabled' : '') + '>' + (calEd.busy ? 'Загружаю…' : 'Загрузить кадр') + '</button>' : '') + (fr ? '<button class="btn ghost" data-act="cd-fr-del">Убрать</button>' : '') + '</div>' + (pk.length ? '<span class="muted" style="font-size:11.5px">или выбрать из галереи</span><div class="pick">' + pk.map(im => '<img loading="lazy" alt="' + esc(im.name || 'арт') + '" src="' + thumbSrc(im) + '" data-cdfr="' + im.id + '" aria-pressed="' + (calEd.frame === im.id) + '" role="button" tabindex="0">').join('') + '</div>' : '') + '</div></div></div>'; })() +
-    '<label class="fld"><span class="lab">Заметка</span><input type="text" id="cd-note" value="' + esc(calEd.note) + '" placeholder="Необязательно, одна строка"></label>' +
+    storyHtml(s, calEd.key) + '<label class="fld"><span class="lab">Заметка</span><input type="text" id="cd-note" value="' + esc(calEd.note) + '" placeholder="Необязательно, одна строка"></label>' +
     '<div class="row" style="gap:8px"><button class="btn" data-act="cd-today">' + (isToday ? '✓ Сегодня в игре · снять отметку' : 'Сделать сегодняшним днём в игре') + '</button><button class="btn ghost" data-act="cd-first">' + (isFirst ? '✓ Первый день игры · снять' : 'Первый день игры') + '</button></div></div>', true);
 }
 /* ---------- мягкое удаление фона для линейки ---------- */
@@ -5918,6 +5931,30 @@ window.companionState = function () {
   const preg = hs.filter(h => !T.her.includes(h.id) && isPreg(h)).map(h => nm(h) + (pregWeek(s, h) ? ' (week ' + pregWeek(s, h) + ')' : ''));
   if (preg.length) lines.push('Pregnant: ' + preg.join(', ') + '.');
   return { scenario: s.name || '', key: T.k, duty: duty.map(nm), text: lines.join('\n') };
+};
+/* «Журнал сам»: пост Slutify и заметки GM из ответов модели, по дням. */
+function storyOf(s, k) { return D.stories.find(x => x.id === calDocId(s.id, k)) || null; }
+function storyNote(s, k) { const st = storyOf(s, k), c = st && st.post && st.post.caption; return c ? '<span class="jd-n jd-sn" title="Подпись к посту Slutify">' + esc(c) + '</span>' : ''; }
+const GM_TAG = { R: 'итог', T: 'нить', D: 'дальше' };
+function storyHtml(s, k) {
+  const st = storyOf(s, k); if (!st || (!st.post && !(st.gm || []).length)) return '';
+  const p = st.post;
+  const post = p ? '<div class="sty-post"><div class="sty-app">🌿 Slutify' + (p.title ? ' · ' + esc(p.title) : '') + '</div>' +
+    (p.author ? '<div class="sty-au">' + esc(p.author) + '</div>' : '') +
+    (p.photo ? '<div class="sty-ph">' + esc(p.photo) + '</div>' : '') +
+    (p.caption ? '<div class="sty-cap">«' + esc(p.caption) + '»</div>' : '') +
+    ((p.comments || []).length ? '<div class="sty-cm">' + p.comments.map(c => '<div><b>@' + esc(c.who) + '</b>' + (c.role ? ' <span>' + esc(c.role) + '</span>' : '') + ': ' + esc(c.text) + '</div>').join('') + '</div>' : '') +
+    (p.likes ? '<div class="sty-lk">❤️ ' + esc(p.likes) + '</div>' : '') + '</div>' : '';
+  const gm = (st.gm || []).length ? '<div class="sty-gm"><b>📓 Заметки GM</b>' + st.gm.map(g => '<div><i>' + esc(GM_TAG[g.t] || g.t || '•') + '</i>' + esc(g.text) + '</div>').join('') + '</div>' : '';
+  return '<div class="fld"><span class="lab">Из истории · записано само</span><div class="sty">' + post + gm + '</div></div>';
+}
+window.companionSetStory = async function (k, part) {
+  const s = scen(); if (!s || calOrd(s, k) == null) return false;
+  const id = calDocId(s.id, k), old = D.stories.find(x => x.id === id) || {};
+  const doc = { scenarioId: s.id, key: k, post: part.post || old.post || null, gm: part.gm || old.gm || null };
+  if (JSON.stringify([doc.post, doc.gm]) === JSON.stringify([old.post || null, old.gm || null])) return true;
+  doc.updatedAt = now();
+  return write('stories', id, doc);
 };
 /* Связь с шапкой сообщений ST: сопоставление имён и запись дня. */
 window.companionMatch = function (names) {

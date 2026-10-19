@@ -60,10 +60,47 @@ function lastHeader() {
     return null;
 }
 
+/* пост Slutify и заметки GM из блоков GFX */
+export function parseStory(mes) {
+    const blocks = String(mes || '').split('<!-- GFX_START -->').slice(1).map(b => b.split('<!-- GFX_END -->')[0]);
+    const out = {};
+    const sl = blocks.find(b => /Slutify/i.test(b) && /Caption:|\[Photo:/i.test(b));
+    if (sl) {
+        const L = htmlToText(sl).split('\n').map(x => x.trim()).filter(Boolean), p = { comments: [] };
+        let afterCap = false;
+        for (const x of L) {
+            let m;
+            if ((m = x.match(/^\[Photo:\s*([\s\S]*?)\]?$/i))) { p.photo = m[1].replace(/\]$/, ''); continue; }
+            if ((m = x.match(/^Caption:\s*["“«]?([\s\S]*?)["”»]?$/i))) { p.caption = m[1]; afterCap = true; continue; }
+            if ((m = x.match(/(?:❤️|♥)\s*([\d.,kK]+)/)) && !/^@/.test(x)) { p.likes = m[1]; continue; }
+            if ((m = x.match(/^@([\w.]+)\s*·\s*([^:]*?):\s*["“«]?([\s\S]*?)["”»]?$/)) && (afterCap || p.author)) { if (afterCap) { p.comments.push({ who: m[1], role: m[2].trim(), text: m[3] }); continue; } }
+            if (!p.author && /^@/.test(x)) { p.author = x; continue; }
+            if (!p.title && (m = x.match(/ago\s*·\s*(.+)$/i))) { p.title = m[1]; continue; }
+        }
+        if (p.caption || p.photo) out.post = p;
+    }
+    const gmm = String(mes || '').match(/GM'?S NOTEBOOK<\/summary>([\s\S]*?)<\/details>/i) || String(mes || '').match(/GM&#39;S NOTEBOOK<\/summary>([\s\S]*?)<\/details>/i);
+    if (gmm) {
+        const gm = htmlToText(gmm[1]).split('\n').map(x => x.trim()).map(x => x.match(/^-\s*(?:\[(\w)\]\s*)?(.+)$/)).filter(Boolean).map(m => ({ t: m[1] || '', text: m[2] }));
+        if (gm.length) out.gm = gm;
+    }
+    return out;
+}
+function lastAi() {
+    const chat = ctx().chat || [];
+    for (let i = chat.length - 1; i >= 0; i--) { const m = chat[i]; if (m && !m.is_user && !m.is_system) return m; }
+    return null;
+}
+
 let scene = null, autoDone = '';
 async function updateScene() {
     scene = lastHeader();
     const w = cw();
+    const last = lastAi();
+    if (w && last && scene && scene.key && w.companionDayOrd(scene.key) != null) {
+        const st = parseStory(last.mes);
+        if (st.post || st.gm) await w.companionSetStory(scene.key, st);
+    }
     if (w && scene && scene.key && cfg().autoDate) {
         const t = w.companionToday(), so = w.companionDayOrd(scene.key), to = w.companionDayOrd(t && t.key);
         const tag = scene.at + ':' + scene.key;

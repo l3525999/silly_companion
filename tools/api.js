@@ -21,6 +21,30 @@ window.companionState = function () {
   if (preg.length) lines.push('Pregnant: ' + preg.join(', ') + '.');
   return { scenario: s.name || '', key: T.k, duty: duty.map(nm), text: lines.join('\n') };
 };
+/* «Журнал сам»: пост Slutify и заметки GM из ответов модели, по дням. */
+function storyOf(s, k) { return D.stories.find(x => x.id === calDocId(s.id, k)) || null; }
+function storyNote(s, k) { const st = storyOf(s, k), c = st && st.post && st.post.caption; return c ? '<span class="jd-n jd-sn" title="Подпись к посту Slutify">' + esc(c) + '</span>' : ''; }
+const GM_TAG = { R: 'итог', T: 'нить', D: 'дальше' };
+function storyHtml(s, k) {
+  const st = storyOf(s, k); if (!st || (!st.post && !(st.gm || []).length)) return '';
+  const p = st.post;
+  const post = p ? '<div class="sty-post"><div class="sty-app">🌿 Slutify' + (p.title ? ' · ' + esc(p.title) : '') + '</div>' +
+    (p.author ? '<div class="sty-au">' + esc(p.author) + '</div>' : '') +
+    (p.photo ? '<div class="sty-ph">' + esc(p.photo) + '</div>' : '') +
+    (p.caption ? '<div class="sty-cap">«' + esc(p.caption) + '»</div>' : '') +
+    ((p.comments || []).length ? '<div class="sty-cm">' + p.comments.map(c => '<div><b>@' + esc(c.who) + '</b>' + (c.role ? ' <span>' + esc(c.role) + '</span>' : '') + ': ' + esc(c.text) + '</div>').join('') + '</div>' : '') +
+    (p.likes ? '<div class="sty-lk">❤️ ' + esc(p.likes) + '</div>' : '') + '</div>' : '';
+  const gm = (st.gm || []).length ? '<div class="sty-gm"><b>📓 Заметки GM</b>' + st.gm.map(g => '<div><i>' + esc(GM_TAG[g.t] || g.t || '•') + '</i>' + esc(g.text) + '</div>').join('') + '</div>' : '';
+  return '<div class="fld"><span class="lab">Из истории · записано само</span><div class="sty">' + post + gm + '</div></div>';
+}
+window.companionSetStory = async function (k, part) {
+  const s = scen(); if (!s || calOrd(s, k) == null) return false;
+  const id = calDocId(s.id, k), old = D.stories.find(x => x.id === id) || {};
+  const doc = { scenarioId: s.id, key: k, post: part.post || old.post || null, gm: part.gm || old.gm || null };
+  if (JSON.stringify([doc.post, doc.gm]) === JSON.stringify([old.post || null, old.gm || null])) return true;
+  doc.updatedAt = now();
+  return write('stories', id, doc);
+};
 /* Связь с шапкой сообщений ST: сопоставление имён и запись дня. */
 window.companionMatch = function (names) {
   const s = scen(); if (!s) return [];

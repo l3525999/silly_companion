@@ -3,17 +3,30 @@ import sys, os
 here = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(here)
 idx = open(sys.argv[1], encoding='utf-8').read()
-shim = open(os.path.join(here, 'shim.html'), encoding='utf-8').read()
-api = open(os.path.join(here, 'api.js'), encoding='utf-8').read()
-old_blob = "const blobUrl = id => id ? '/_blob/' + id : '';"
-assert idx.count(old_blob) == 1, 'blobUrl not found'
-idx = idx.replace(old_blob, "const blobUrl = id => window.__cmpBlob(id);")
-idx = idx.replace("live: 'сохранено в облаке'", "live: 'сохранено в ST'")
-tail = 'render(); startDb();\n})();'
-assert idx.count(tail) == 1, 'main script tail not found'
-idx = idx.replace(tail, api + '\nrender(); startDb();\n})();')
+read = lambda n: open(os.path.join(here, n), encoding='utf-8').read()
+shim, api, css = read('shim.html'), read('api.js'), read('story.css')
+
+
+def patch(old, new):
+    global idx
+    assert idx.count(old) == 1, 'patch target not found: ' + old[:60]
+    idx = idx.replace(old, new)
+
+
+# хранилище и картинки ST
+patch("const blobUrl = id => id ? '/_blob/' + id : '';", "const blobUrl = id => window.__cmpBlob(id);")
+patch("live: 'сохранено в облаке'", "live: 'сохранено в ST'")
+# «журнал сам»: истории дней из ответов модели (отдельная коллекция, окно дня её не перезаписывает)
+patch("caldays: [] };", "caldays: [], stories: [] };")
+patch("""(d.x.note ? '<span class="jd-n">' + esc(d.x.note) + '</span>' : '')""",
+      """(d.x.note ? '<span class="jd-n">' + esc(d.x.note) + '</span>' : storyNote(s, d.k))""")
+patch("""'<label class="fld"><span class="lab">Заметка</span>""",
+      """storyHtml(s, calEd.key) + '<label class="fld"><span class="lab">Заметка</span>""")
+# мост для расширения
+patch('render(); startDb();\n})();', api + '\nrender(); startDb();\n})();')
+
 page = ('<!doctype html><html lang="ru"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width,initial-scale=1"></head><body>\n'
+        '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' + css + '</style></head><body>\n'
         + shim + idx + '\n</body></html>')
 open(os.path.join(root, 'companion.html'), 'w', encoding='utf-8').write(page)
 print('ok', len(page))
