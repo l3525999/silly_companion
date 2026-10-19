@@ -92,6 +92,29 @@ function lastAi() {
     return null;
 }
 
+/* все дни чата, включая скрытые сообщения (Memory Books и /hide оставляют их в чате с is_system) */
+let backfilling = false;
+async function backfill(tries = 10) {
+    const w = cw();
+    if (!w || !w.companionToday()) { if (tries > 0) setTimeout(() => backfill(tries - 1).then(n => n && updateScene()), 1000); return 0; }
+    if (backfilling) return 0;
+    backfilling = true;
+    try {
+        const per = {}; let key = null;
+        for (const m of ctx().chat || []) {
+            if (!m || m.is_user) continue;
+            const h = parseHeader(m.mes); if (h && h.key) key = h.key;
+            if (!key || w.companionDayOrd(key) == null) continue;
+            const st = parseStory(m.mes);
+            if (st.post) (per[key] = per[key] || {}).post = st.post;
+            if (st.gm) (per[key] = per[key] || {}).gm = st.gm;
+        }
+        const keys = Object.keys(per);
+        for (const k of keys) await w.companionSetStory(k, per[k]);
+        return keys.length;
+    } finally { backfilling = false; }
+}
+
 let scene = null, autoDone = '';
 async function updateScene() {
     scene = lastHeader();
@@ -175,7 +198,7 @@ function mount() {
         const up = () => { grip.removeEventListener('pointermove', mv); grip.removeEventListener('pointerup', up); panel.classList.remove('drag'); save(); };
         grip.addEventListener('pointermove', mv); grip.addEventListener('pointerup', up);
     });
-    frame.addEventListener('load', () => setTimeout(() => { updateScene(); inject(); }, 400));
+    frame.addEventListener('load', () => setTimeout(async () => { await backfill(); updateScene(); inject(); }, 400));
     let ch = 0;
     window.addEventListener('companion-changed', () => { clearTimeout(ch); ch = setTimeout(() => { inject(); drawStrip(); }, 30); });
     if (cfg().open) setOpen(true);
@@ -218,6 +241,7 @@ function settingsUi() {
         '<label class="checkbox_label"><input type="checkbox" id="cmp-auto"><span>Сдвигать «сегодня» в журнале по дате из шапки ответа (только вперёд)</span></label>' +
         '<label for="cmp-depth">Глубина вставки (0 = после последнего сообщения)</label><input id="cmp-depth" class="text_pole" type="number" min="0" max="50">' +
         '<small>Что сейчас уходит модели:</small><pre id="cmp-preview" class="cmp-pre"></pre>' +
+        '<div class="menu_button" id="cmp-backfill">Заполнить журнал из всего чата</div><small id="cmp-backfill-st">Делается само при открытии чата, включая скрытые сообщения.</small>' +
         '<hr><b>Перенос с claude.ai</b><small>Файл companion-migration.json: данные и картинки компаньона.</small>' +
         '<input type="file" id="cmp-import" accept=".json,application/json" hidden><div class="menu_button" id="cmp-import-btn">Загрузить файл переноса</div><small id="cmp-import-st"></small>' +
         '</div></div></div>';
@@ -228,6 +252,9 @@ function settingsUi() {
     inj.addEventListener('change', () => { cfg().inject = inj.checked; save(); inject(); });
     au.addEventListener('change', () => { cfg().autoDate = au.checked; save(); updateScene(); });
     dep.addEventListener('input', () => { cfg().depth = Math.max(0, Number(dep.value) || 0); save(); inject(); });
+    document.getElementById('cmp-backfill').addEventListener('click', async () => {
+        const n = await backfill(0); document.getElementById('cmp-backfill-st').textContent = 'Дней с историей: ' + n; drawStrip();
+    });
     const imp = document.getElementById('cmp-import'), st = document.getElementById('cmp-import-st');
     document.getElementById('cmp-import-btn').addEventListener('click', () => imp.click());
     imp.addEventListener('change', async () => {
@@ -241,6 +268,6 @@ jQuery(() => {
     settingsUi();
     const { eventSource, event_types: E } = ctx();
     eventSource.on(E.GENERATION_STARTED, inject);
-    eventSource.on(E.CHAT_CHANGED, () => { autoDone = ''; updateScene(); inject(); });
+    eventSource.on(E.CHAT_CHANGED, async () => { autoDone = ''; await backfill(); updateScene(); inject(); });
     [E.MESSAGE_RECEIVED, E.MESSAGE_EDITED, E.MESSAGE_SWIPED, E.MESSAGE_DELETED].forEach(ev => ev && eventSource.on(ev, () => setTimeout(updateScene, 50)));
 });
