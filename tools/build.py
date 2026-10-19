@@ -18,8 +18,6 @@ patch("const blobUrl = id => id ? '/_blob/' + id : '';", "const blobUrl = id => 
 patch("live: 'сохранено в облаке'", "live: 'сохранено в ST'")
 # «журнал сам»: истории дней из ответов модели (отдельная коллекция, окно дня её не перезаписывает)
 patch("caldays: [] };", "caldays: [], stories: [] };")
-patch("""(d.x.note ? '<span class="jd-n">' + esc(d.x.note) + '</span>' : '')""",
-      """(d.x.note ? '<span class="jd-n">' + esc(d.x.note) + '</span>' : storyNote(s, d.k))""")
 patch("""'<label class="fld"><span class="lab">Заметка</span>""",
       """storyHtml(s, calEd.key) + '<label class="fld"><span class="lab">Заметка</span>""")
 # мост для расширения

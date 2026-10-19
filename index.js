@@ -60,7 +60,7 @@ function lastHeader() {
     return null;
 }
 
-/* пост Slutify и заметки GM из блоков GFX */
+/* пост Slutify из блоков GFX */
 export function parseStory(mes) {
     const blocks = String(mes || '').split('<!-- GFX_START -->').slice(1).map(b => b.split('<!-- GFX_END -->')[0]);
     const out = {};
@@ -78,11 +78,6 @@ export function parseStory(mes) {
             if (!p.title && (m = x.match(/ago\s*·\s*(.+)$/i))) { p.title = m[1]; continue; }
         }
         if (p.caption || p.photo) out.post = p;
-    }
-    const gmm = String(mes || '').match(/GM'?S NOTEBOOK<\/summary>([\s\S]*?)<\/details>/i) || String(mes || '').match(/GM&#39;S NOTEBOOK<\/summary>([\s\S]*?)<\/details>/i);
-    if (gmm) {
-        const gm = htmlToText(gmm[1]).split('\n').map(x => x.trim()).map(x => x.match(/^-\s*(?:\[(\w)\]\s*)?(.+)$/)).filter(Boolean).map(m => ({ t: m[1] || '', text: m[2] }));
-        if (gm.length) out.gm = gm;
     }
     return out;
 }
@@ -106,8 +101,7 @@ async function backfill(tries = 10) {
             const h = parseHeader(m.mes); if (h && h.key) key = h.key;
             if (!key || w.companionDayOrd(key) == null) continue;
             const st = parseStory(m.mes);
-            if (st.post) (per[key] = per[key] || {}).post = st.post;
-            if (st.gm) (per[key] = per[key] || {}).gm = st.gm;
+            if (st.post) per[key] = { post: st.post };
         }
         const keys = Object.keys(per);
         for (const k of keys) await w.companionSetStory(k, per[k]);
@@ -122,7 +116,7 @@ async function updateScene() {
     const last = lastAi();
     if (w && last && scene && scene.key && w.companionDayOrd(scene.key) != null) {
         const st = parseStory(last.mes);
-        if (st.post || st.gm) await w.companionSetStory(scene.key, st);
+        if (st.post) await w.companionSetStory(scene.key, st);
     }
     if (w && scene && scene.key && cfg().autoDate) {
         const t = w.companionToday(), so = w.companionDayOrd(scene.key), to = w.companionDayOrd(t && t.key);
