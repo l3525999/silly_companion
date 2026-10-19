@@ -4,7 +4,7 @@ here = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(here)
 idx = open(sys.argv[1], encoding='utf-8').read()
 read = lambda n: open(os.path.join(here, n), encoding='utf-8').read()
-shim, api, css = read('shim.html'), read('api.js'), read('story.css')
+shim, api, css = read('shim.html'), read('api.js'), read('companion.css')
 
 
 def patch(old, new):

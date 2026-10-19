@@ -1,7 +1,7 @@
 /* Компаньон внутри SillyTavern: панель с компаньоном, состояние дня в промпте и чтение шапки сообщений. */
 const MOD = 'companion';
 const BASE = new URL('.', import.meta.url).pathname;
-const DEF = { inject: true, depth: 1, width: 62, open: false, autoDate: true };
+const DEF = { inject: true, depth: 1, width: 62, open: false, autoDate: true, mode: 'mini' };
 const ctx = () => SillyTavern.getContext();
 function cfg() { const es = ctx().extensionSettings; es[MOD] = Object.assign({}, DEF, es[MOD] || {}); return es[MOD]; }
 const save = () => ctx().saveSettingsDebounced();
@@ -137,9 +137,9 @@ function drawStrip() {
     if (!sc) html = '<span class="cs-muted">В последних ответах нет шапки дня</span>';
     else {
         const subs = w ? w.companionMatch(sc.subjects.map(x => x.name)) : [];
-        html += '<span class="cs-date">' + (sc.wd ? '<b>' + (WDJ[sc.wd] || '') + '</b> ' : '') + esc(sc.key && w ? w.companionDayLabel(sc.key) : '') + (sc.time ? ' · ' + esc(sc.time) : '') + '</span>';
-        if (sc.dayType) html += '<span class="cs-type">' + esc(sc.dayType) + '</span>';
-        html += sc.subjects.map((x, i) => '<span class="cs-sub" title="' + esc([x.panties && 'Panties: ' + x.panties, x.conception && 'Conception: ' + x.conception].filter(Boolean).join(' · ')) + '">' +
+        if (!isMini()) html += '<span class="cs-date">' + (sc.wd ? '<b>' + (WDJ[sc.wd] || '') + '</b> ' : '') + esc(sc.key && w ? w.companionDayLabel(sc.key) : '') + (sc.time ? ' · ' + esc(sc.time) : '') + '</span>';
+        if (sc.dayType && !isMini()) html += '<span class="cs-type">' + esc(sc.dayType) + '</span>';
+        if (!isMini()) html += sc.subjects.map((x, i) => '<span class="cs-sub" title="' + esc([x.panties && 'Panties: ' + x.panties, x.conception && 'Conception: ' + x.conception].filter(Boolean).join(' · ')) + '">' +
             '<b>' + esc(subs[i] && subs[i].id ? subs[i].nick : x.name) + '</b> <span>' + esc(x.phase.split(' ')[0]) + '</span>' +
             (x.arousal != null ? ' <span class="cs-k">♥</span>' + bar(x.arousal) : '') + (x.composure != null ? ' <span class="cs-k">理</span>' + bar(x.composure) : '') +
             (x.creampies ? ' <span class="cs-cp">×' + x.creampies + '</span>' : '') + '</span>').join('');
@@ -151,6 +151,17 @@ function drawStrip() {
         }
     }
     strip.querySelector('.cs-body').innerHTML = html;
+    syncMini();
+}
+const isMini = () => cfg().mode === 'mini';
+function syncMini() { const w = cw(); if (w && w.companionMini) w.companionMini(isMini(), scene ? { key: scene.key, dayType: scene.dayType, time: scene.time, subjects: scene.subjects } : null); }
+function setMode(m) {
+    cfg().mode = m; save();
+    panel.classList.toggle('mini', m === 'mini');
+    const b = panel.querySelector('.cmp-mode');
+    b.className = 'cmp-mode fa-solid ' + (m === 'mini' ? 'fa-up-right-and-down-left-from-center' : 'fa-down-left-and-up-right-to-center');
+    b.title = m === 'mini' ? 'Весь компаньон' : 'Мини-режим';
+    drawStrip();
 }
 
 /* ---------- панель ---------- */
@@ -165,7 +176,7 @@ function mount() {
     panel = document.createElement('div');
     panel.id = 'cmp-panel';
     panel.innerHTML = '<div class="cmp-grip" title="Потяните, чтобы изменить ширину"></div>' +
-        '<div class="cmp-col"><div class="cmp-strip"><div class="cs-body"></div><button class="cmp-x fa-solid fa-xmark" title="Закрыть"></button></div>' +
+        '<div class="cmp-col"><div class="cmp-strip"><div class="cs-body"></div><button class="cmp-mode"></button><button class="cmp-x fa-solid fa-xmark" title="Закрыть"></button></div>' +
         '<iframe id="cmp-frame" src="' + BASE + 'companion.html"></iframe></div>';
     document.body.appendChild(panel);
     frame = panel.querySelector('iframe');
@@ -178,6 +189,8 @@ function mount() {
     document.getElementById('top-settings-holder').appendChild(btn);
     btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
     panel.querySelector('.cmp-x').addEventListener('click', () => setOpen(false));
+    panel.querySelector('.cmp-mode').addEventListener('click', () => setMode(isMini() ? 'full' : 'mini'));
+    window.addEventListener('companion-open-her', e => { setMode('full'); const w = cw(); if (w) w.companionOpenCard(e.detail); });
     strip.addEventListener('click', async e => {
         const b = e.target.closest('[data-act]'); const w = cw(); if (!b || !w || !scene) return;
         if (b.dataset.act === 'today') await w.companionSetToday(scene.key);
@@ -195,6 +208,7 @@ function mount() {
     frame.addEventListener('load', () => setTimeout(async () => { await backfill(); updateScene(); inject(); }, 400));
     let ch = 0;
     window.addEventListener('companion-changed', () => { clearTimeout(ch); ch = setTimeout(() => { inject(); drawStrip(); }, 30); });
+    setMode(cfg().mode);
     if (cfg().open) setOpen(true);
 }
 

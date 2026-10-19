@@ -1,0 +1,46 @@
+/* мини-режим */
+#mini{display:none}
+body.mini{overflow:hidden}
+body.mini #mini{display:block;position:fixed;inset:0;z-index:40;overflow:auto;padding:10px 10px 16px;
+  background:#FCF9F1 repeating-linear-gradient(transparent 0 25px,#E3EAF1 25px 26px);
+  --red:#C7343F;--ink:#2B3D73;--hand:Caveat,"Segoe Print",cursive;color:var(--ink);font:13px/1.4 "M PLUS Rounded 1c",system-ui,sans-serif}
+.mn-hd{display:flex;align-items:baseline;gap:8px;padding:2px 4px 8px;border-bottom:2px solid var(--red);margin-bottom:10px}
+.mn-hd b{font:700 22px/1 var(--hand);color:var(--red)}
+.mn-hd span{font-weight:700}
+.mn-hd em{margin-left:auto;font-style:normal;opacity:.6;font-size:12px}
+.mn-card{display:flex;gap:8px;align-items:flex-end;padding:8px 8px 10px;margin-bottom:10px;border-radius:8px;background:#fffdf8cc;border:1px dashed #C7343F55;cursor:pointer}
+.mn-card:hover{border-color:var(--red)}
+.mn-card.ovu{box-shadow:0 0 0 2px #f4a7bd88,0 0 18px #f4a7bd66}
+.mn-figbox{flex:none;display:flex;align-items:flex-end;justify-content:center;min-width:90px}
+.mn-fig{background-repeat:no-repeat;border-radius:6px}
+.mn-fig.cut{filter:drop-shadow(0 6px 6px #2b3d7333);border-radius:0}
+.mn-sil{width:70px;border-radius:35px 35px 6px 6px;background:#dde3ec;display:flex;align-items:center;justify-content:center;font:700 28px var(--hand);color:#8a97b0}
+.mn-info{flex:1;min-width:0;display:grid;gap:6px;align-content:end}
+.mn-nm{display:flex;align-items:center;gap:6px}
+.mn-nm b{display:block;font:700 24px/1 var(--hand)}
+.mn-nm small{display:block;font-size:11px;opacity:.65}
+.mn-rt{margin-left:auto;font-style:normal;width:26px;height:26px;border-radius:50%;border:2px solid var(--red);color:var(--red);display:flex;align-items:center;justify-content:center;font:700 16px var(--hand)}
+.mn-ph{font-weight:700;color:var(--red)}
+.mn-info dl{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;margin:0}
+.mn-info dt{opacity:.6;font-size:11.5px}
+.mn-info dd{margin:0;font-weight:700}
+.mn-bar{display:flex;align-items:center;gap:6px;font-size:11.5px}
+.mn-bar span{flex:none;width:14px;color:var(--red);font-weight:700}
+.mn-bar>i{display:block;flex:1 1 auto;width:auto!important;height:6px;border-radius:3px;background:#C7343F22;overflow:hidden}
+.mn-bar>i>i{display:block;max-width:none;margin:0;height:100%;background:var(--red)}
+.mn-bar b{flex:none;width:34px;text-align:right}
+.mn-live{display:flex;flex-wrap:wrap;gap:4px}
+.mn-live span{font-size:11px;padding:1px 6px;border-radius:4px;background:#C7343F14;color:#8a1f2b}
+.mn-empty{opacity:.7;padding:20px 6px;text-align:center}
+.sty{display:grid;gap:10px}
+.sty-post{max-width:420px;background:#121212;color:#eee;border-radius:16px;padding:12px 14px;font:12.5px/1.5 system-ui,sans-serif;box-shadow:0 4px 14px #0004}
+.sty-app{text-align:center;font-weight:700;color:#e0476b;margin-bottom:6px}
+.sty-au{font-weight:700}
+.sty-ph{margin:6px 0;padding:8px 10px;border-radius:8px;background:#0a0a0a;color:#aaa;font-style:italic;font-size:12px}
+.sty-cap{margin:4px 0 6px}
+.sty-cm{border-top:1px solid #333;padding-top:6px;display:grid;gap:4px}
+.sty-cm span{opacity:.6;font-size:11px}
+.sty-lk{margin-top:6px;opacity:.7;font-size:12px}
+.sty-gm{background:#FCF9F1;border:1px dashed #C7343F66;border-radius:8px;padding:8px 12px;display:grid;gap:4px;font-size:13px;color:#2B3D73}
+.sty-gm b{color:#C7343F}
+.sty-gm i{display:inline-block;min-width:52px;margin-right:6px;font-style:normal;font-size:11px;color:#C7343F;text-transform:uppercase;letter-spacing:.04em}

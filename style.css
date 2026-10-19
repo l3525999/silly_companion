@@ -43,6 +43,12 @@
     border: 1px solid var(--cmp-red); background: #fff; color: var(--cmp-red);
 }
 #cmp-panel .cs-btn:hover { background: var(--cmp-red); color: #fff; }
+#cmp-panel.mini { width: 360px; }
+#cmp-panel.mini .cmp-grip { display: none; }
+#cmp-panel .cmp-mode {
+    flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--cmp-red);
+    background: #fff; color: var(--cmp-red); cursor: pointer; font-size: 11px;
+}
 #cmp-panel .cmp-x {
     flex: none; width: 24px; height: 24px; border-radius: 50%; border: 0;
     background: rgba(0, 0, 0, .55); color: #fff; cursor: pointer; font-size: 12px;
