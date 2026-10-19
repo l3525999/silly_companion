@@ -144,6 +144,36 @@ function mount() {
     if (cfg().open) setOpen(true);
 }
 
+/* ---------- перенос из компаньона на claude.ai ---------- */
+const b64text = t => { const u = new TextEncoder().encode(t); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+async function putFile(name, text) {
+    const r = await fetch('/api/files/upload', { method: 'POST', headers: ctx().getRequestHeaders(), body: JSON.stringify({ name, data: b64text(text) }) });
+    if (!r.ok) throw new Error('файл ' + name + ': ' + r.status);
+}
+async function importBundle(file, say) {
+    say('Читаю файл…');
+    const j = JSON.parse(await file.text());
+    if (!j || j.app !== 'companion-migration' || !j.data) throw new Error('это не файл переноса компаньона');
+    const old = await fetch('/user/files/companion-db.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => '');
+    if (old) {
+        let has = false; try { has = Object.keys((JSON.parse(old).data || {}).heroines || {}).length > 0; } catch (e) { /* пусто */ }
+        if (has && !confirm('В компаньоне в ST уже есть данные. Заменить их данными из файла? Старые сохранятся в companion-db-before-import.json.')) { say('Отменено'); return; }
+        await putFile('companion-db-before-import.json', old);
+    }
+    const names = Object.keys(j.files || {});
+    for (let i = 0; i < names.length; i++) {
+        const name = names[i], ext = name.split('.').pop().toLowerCase();
+        say('Картинки ' + (i + 1) + ' из ' + names.length + '…');
+        const r = await fetch('/api/images/upload', { method: 'POST', headers: ctx().getRequestHeaders(), body: JSON.stringify({ image: j.files[name], format: ext, ch_name: 'companion', filename: name }) });
+        if (!r.ok) throw new Error('картинка ' + name + ': ' + r.status);
+    }
+    say('Сохраняю данные…');
+    await putFile('companion-db.json', JSON.stringify({ app: 'companion-st', version: 1, savedAt: new Date().toISOString(), data: j.data }));
+    frame.src = BASE + 'companion.html?t=' + Date.now();
+    const n = Object.keys(j.data.heroines || {}).length;
+    say('Готово: ' + Object.keys(j.data.scenarios || {}).length + ' сценарий, ' + n + ' персонажей, ' + names.length + ' картинок.');
+}
+
 function settingsUi() {
     const html = '<div class="cmp-settings"><div class="inline-drawer"><div class="inline-drawer-toggle inline-drawer-header"><b>Компаньон</b><div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div></div>' +
         '<div class="inline-drawer-content">' +
@@ -151,6 +181,8 @@ function settingsUi() {
         '<label class="checkbox_label"><input type="checkbox" id="cmp-auto"><span>Сдвигать «сегодня» в журнале по дате из шапки ответа (только вперёд)</span></label>' +
         '<label for="cmp-depth">Глубина вставки (0 = после последнего сообщения)</label><input id="cmp-depth" class="text_pole" type="number" min="0" max="50">' +
         '<small>Что сейчас уходит модели:</small><pre id="cmp-preview" class="cmp-pre"></pre>' +
+        '<hr><b>Перенос с claude.ai</b><small>Файл companion-migration.json: данные и картинки компаньона.</small>' +
+        '<input type="file" id="cmp-import" accept=".json,application/json" hidden><div class="menu_button" id="cmp-import-btn">Загрузить файл переноса</div><small id="cmp-import-st"></small>' +
         '</div></div></div>';
     const box = document.getElementById('extensions_settings2') || document.getElementById('extensions_settings');
     box.insertAdjacentHTML('beforeend', html);
@@ -159,6 +191,12 @@ function settingsUi() {
     inj.addEventListener('change', () => { cfg().inject = inj.checked; save(); inject(); });
     au.addEventListener('change', () => { cfg().autoDate = au.checked; save(); updateScene(); });
     dep.addEventListener('input', () => { cfg().depth = Math.max(0, Number(dep.value) || 0); save(); inject(); });
+    const imp = document.getElementById('cmp-import'), st = document.getElementById('cmp-import-st');
+    document.getElementById('cmp-import-btn').addEventListener('click', () => imp.click());
+    imp.addEventListener('change', async () => {
+        const f = imp.files[0]; imp.value = ''; if (!f) return;
+        try { await importBundle(f, t => { st.textContent = t; }); } catch (e) { st.textContent = 'Не получилось: ' + e.message; }
+    });
 }
 
 jQuery(() => {
