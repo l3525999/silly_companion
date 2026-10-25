@@ -13,14 +13,14 @@ def patch(old, new):
     idx = idx.replace(old, new)
 
 
-# хранилище и картинки ST
+# хранилище и картинки на своём сервере (server.js)
 patch("const blobUrl = id => id ? '/_blob/' + id : '';", "const blobUrl = id => window.__cmpBlob(id);")
-patch("live: 'сохранено в облаке'", "live: 'сохранено в ST'")
-# «журнал сам»: истории дней из ответов модели (отдельная коллекция, окно дня её не перезаписывает)
+patch("live: 'сохранено в облаке'", "live: 'сохранено на сервере'")
+# посты Slutify, сохранённые из чата раньше (коллекция stories), видны в окне дня
 patch("caldays: [] };", "caldays: [], stories: [] };")
 patch("""'<label class="fld"><span class="lab">Заметка</span>""",
       """storyHtml(s, calEd.key) + '<label class="fld"><span class="lab">Заметка</span>""")
-# мост для расширения
+# мини-режим и просмотр постов Slutify
 patch('render(); startDb();\n})();', api + '\nrender(); startDb();\n})();')
 
 page = ('<!doctype html><html lang="ru"><head><meta charset="utf-8">'

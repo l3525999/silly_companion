@@ -7,7 +7,7 @@ body.mini #mini{display:block;position:fixed;inset:0;z-index:40;overflow:auto;pa
 .mn-hd{display:flex;align-items:baseline;gap:8px;padding:2px 4px 8px;border-bottom:2px solid var(--red);margin-bottom:10px}
 .mn-hd b{font:700 22px/1 var(--hand);color:var(--red)}
 .mn-hd span{font-weight:700}
-.mn-hd em{margin-left:auto;font-style:normal;opacity:.6;font-size:12px}
+.mn-hd em{font-style:normal;opacity:.6;font-size:12px}
 .mn-card{display:flex;gap:8px;align-items:flex-end;padding:8px 8px 10px;margin-bottom:10px;border-radius:8px;background:#fffdf8cc;border:1px dashed #C7343F55;cursor:pointer}
 .mn-card:hover{border-color:var(--red)}
 .mn-card.ovu{box-shadow:0 0 0 2px #f4a7bd88,0 0 18px #f4a7bd66}
@@ -44,36 +44,29 @@ body.mini #mini{display:block;position:fixed;inset:0;z-index:40;overflow:auto;pa
 .sty-gm{background:#FCF9F1;border:1px dashed #C7343F66;border-radius:8px;padding:8px 12px;display:grid;gap:4px;font-size:13px;color:#2B3D73}
 .sty-gm b{color:#C7343F}
 .sty-gm i{display:inline-block;min-width:52px;margin-right:6px;font-style:normal;font-size:11px;color:#C7343F;text-transform:uppercase;letter-spacing:.04em}
+.mn-full{margin-left:auto;text-decoration:none;color:var(--red);font-size:18px;line-height:1}
+#mini-btn{position:fixed;right:12px;bottom:12px;z-index:30;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid #C7343F;color:#C7343F;text-decoration:none;font-size:16px;box-shadow:0 2px 8px #0002}
+body.mini #mini-btn{display:none}
 </style></head><body>
 <script>
-/* Хранилище компаньона внутри SillyTavern: вместо db/assets артефакта claude.ai.
-   Данные: user/files/companion-db.json (+ копия за день), картинки: user/images/companion/. */
+/* Хранилище компаньона на своём сервере (server.js) вместо db/assets артефакта claude.ai.
+   Данные: data/db.json (+ копия за день), картинки: data/images/. */
 (function () {
-  const P = window.parent !== window ? window.parent : null;
-  const ctx = () => { try { return P && P.SillyTavern ? P.SillyTavern.getContext() : null; } catch (e) { return null; } };
-  const headers = () => { const c = ctx(); return c ? c.getRequestHeaders() : { 'Content-Type': 'application/json' }; };
-  const FILE = 'companion-db.json', IMG = 'companion';
   const S = {}, L = {};
   const clone = o => JSON.parse(JSON.stringify(o));
   const snap = c => { const docs = Object.keys(S[c] || {}).map(id => ({ id, exists: true, data: () => clone(S[c][id]), metadata: {} })); return { docs, size: docs.length, empty: !docs.length, docChanges: () => [] }; };
-  const fire = c => { (L[c] || []).forEach(f => { try { f(snap(c)); } catch (e) { console.error('[companion]', e); } }); try { P && P.dispatchEvent(new CustomEvent('companion-changed')); } catch (e) { /* нет */ } };
-  const b64 = async blob => { const r = new FileReader(); return new Promise((ok, no) => { r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(blob); }); };
-  const ready = fetch('/user/files/' + FILE + '?t=' + Date.now(), { cache: 'no-store' })
+  const fire = c => (L[c] || []).forEach(f => { try { f(snap(c)); } catch (e) { console.error('[companion]', e); } });
+  const ready = fetch('api/db', { cache: 'no-store' })
     .then(r => r.ok ? r.json() : null).then(j => { if (j && j.data) Object.assign(S, j.data); }).catch(() => {});
-  let saveT = 0, dayCopy = '';
-  async function put(name, text) {
-    const r = await fetch('/api/files/upload', { method: 'POST', headers: headers(), body: JSON.stringify({ name, data: await b64(new Blob([text])) }) });
-    if (!r.ok) throw new Error(r.status + ' ' + await r.text());
-  }
+  let saveT = 0;
   function persist() {
     clearTimeout(saveT);
     saveT = setTimeout(async () => {
-      const text = JSON.stringify({ app: 'companion-st', version: 1, savedAt: new Date().toISOString(), data: S });
       try {
-        await put(FILE, text);
-        const d = new Date().toISOString().slice(0, 10);
-        if (dayCopy !== d) { await put('companion-db-' + d + '.json', text); dayCopy = d; }
-      } catch (e) { console.error('[companion] save failed', e); try { P.toastr.error('Компаньон: не сохранилось (' + e.message + ')'); } catch (er) { /* нет */ } }
+        const r = await fetch('api/db', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: S }) });
+        if (!r.ok) throw new Error(r.status + ' ' + await r.text());
+      } catch (e) { console.error('[companion] save failed', e); alert('Компаньон: не сохранилось (' + e.message + ')'); }
     }, 400);
   }
   const db = {
@@ -87,21 +80,22 @@ body.mini #mini{display:block;position:fixed;inset:0;z-index:40;overflow:auto;pa
     }),
   };
   const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
+  const file = id => /\./.test(id) ? id : id + '.png';
   const assets = {
     upload: async (blob, o) => {
       const type = (o && o.type) || blob.type || 'image/png', ext = EXT[type] || 'png';
       const id = 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext;
-      const r = await fetch('/api/images/upload', { method: 'POST', headers: headers(), body: JSON.stringify({ image: await b64(blob), format: ext, ch_name: IMG, filename: id }) });
+      const r = await fetch('api/images/' + id, { method: 'PUT', headers: { 'Content-Type': type }, body: blob });
       if (!r.ok) throw { code: 'upload_failed' };
       return { id, url: window.__cmpBlob(id), sizeBytes: blob.size, contentType: type };
     },
-    delete: async id => { await fetch('/api/images/delete', { method: 'POST', headers: headers(), body: JSON.stringify({ path: 'user/images/' + IMG + '/' + (/\./.test(id) ? id : id + '.png') }) }); return { deleted: true }; },
+    delete: async id => { await fetch('api/images/' + file(id), { method: 'DELETE' }); return { deleted: true }; },
   };
   const downloads = {
     save: async ({ filename, data }) => { const a = document.createElement('a'); a.href = URL.createObjectURL(data); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); },
   };
   /* картинки, перенесённые из артефакта, лежат как <id>.png */
-  window.__cmpBlob = id => id ? '/user/images/' + IMG + '/' + (/\./.test(id) ? id : id + '.png') : '';
+  window.__cmpBlob = id => id ? 'images/' + file(id) : '';
   window.claude = { use: async k => k === 'db' ? db : k === 'assets' ? assets : k === 'downloads' ? downloads : null };
 })();
 </script>
@@ -4478,7 +4472,7 @@ function startDb() {
 }
 function setSync() {
   const s = $('sync');
-  s.textContent = { connecting: 'подключаюсь…', live: 'сохранено в ST', off: 'только просмотр', err: 'нет связи' }[mode];
+  s.textContent = { connecting: 'подключаюсь…', live: 'сохранено на сервере', off: 'только просмотр', err: 'нет связи' }[mode];
   s.className = 'sync' + (mode === 'off' || mode === 'err' ? ' bad' : '');
 }
 
@@ -5942,31 +5936,7 @@ document.addEventListener('dragleave', e => { const dz = e.target.closest && e.t
 document.addEventListener('drop', e => { const dz = e.target.closest && e.target.closest('#drop'); if (!dz) return; e.preventDefault(); dz.classList.remove('over'); uploadFiles(e.dataTransfer.files, { heroineId: ui.galHer !== 'all' && ui.galHer !== 'none' ? ui.galHer : null }); });
 window.addEventListener('beforeunload', e => { if ((pEdit && pEdit.dirty) || edit) { e.preventDefault(); e.returnValue = ''; } });
 
-/* Мост для расширения ST: состояние дня текстом для промпта. Вставляется в конец основного скрипта компаньона. */
-window.companionState = function () {
-  const s = scen(); if (!s) return null;
-  const T = todayInfo(s); if (!T) return { scenario: s.name || '', text: '' };
-  const hs = hersIn(s.id), nm = h => h.nick || h.name || '?';
-  const ph = h => { if (isPreg(h)) { const w = pregWeek(s, h); return 'pregnant' + (w ? ' (week ' + w + ')' : ''); } const p = phaseAt(s, h, T.o); return p ? PH[p.k][0] + ' ' + PH[p.k][1] + (p.k === 'ovu' ? ' (fertile, high chance)' : '') : 'cycle unknown'; };
-  const cnts = s.counters || [];
-  const lines = [];
-  const [m, d] = T.k.split('-').map(Number), mon = (CAL_ALL.find(x => x[3] === m) || [])[0] || '';
-  lines.push('Today in game: ' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][wdOf(s, T.o)] + ', ' + d + ' ' + ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m - 1] + '.');
-  if (T.t) lines.push('Day type: ' + (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') + (T.t.rule ? '. Rule of the day: ' + T.t.rule : '') + '.');
-  const duty = T.her.map(herOf).filter(Boolean);
-  if (duty.length) duty.forEach(h => {
-    const c = cnts.map(x => ((h.cnt || {})[x.key] || 0) ? x.label + ' ' + h.cnt[x.key] : '').filter(Boolean).join(', ');
-    lines.push('Duty student: ' + nm(h) + ' — ' + ph(h) + '; duties so far: ' + dutyOf(s, h.id) + (c ? '; ' + c : '') + '.');
-  });
-  else lines.push('Duty student: not chosen yet.');
-  const ovu = hs.filter(h => !T.her.includes(h.id) && !isPreg(h) && (phaseAt(s, h, T.o) || {}).k === 'ovu').map(nm);
-  if (ovu.length) lines.push('Also ovulating today: ' + ovu.join(', ') + '.');
-  const preg = hs.filter(h => !T.her.includes(h.id) && isPreg(h)).map(h => nm(h) + (pregWeek(s, h) ? ' (week ' + pregWeek(s, h) + ')' : ''));
-  if (preg.length) lines.push('Pregnant: ' + preg.join(', ') + '.');
-  return { scenario: s.name || '', key: T.k, duty: duty.map(nm), text: lines.join('\n') };
-};
-/* Мини-режим: девушки текущей сцены с фигурой без фона и параметрами. scene приходит из расширения (шапка ответа). */
-let miniScene = null;
+/* Мини-режим (адрес с #mini): дежурные дня с фигурой без фона и параметрами, для узкого окна рядом с чатом. */
 function miniFig(h, maxW, maxH) {
   const o = outfitsOf(h), r = o.find(x => x && x.assetId);
   if (!r) return '<div class="mn-sil" style="height:' + maxH + 'px">' + esc((h.nick || h.name || '?').slice(0, 1)) + '</div>';
@@ -5983,9 +5953,8 @@ function miniBar(label, v) { return '<div class="mn-bar"><span>' + label + '</sp
 function renderMini() {
   let box = document.getElementById('mini'); if (!box) { box = document.createElement('div'); box.id = 'mini'; document.body.appendChild(box); }
   const s = scen(); if (!s) { box.innerHTML = '<p class="mn-empty">Сценарий не загружен</p>'; return; }
-  const T = todayInfo(s), sc = miniScene, so = sc && sc.key ? calOrd(s, sc.key) : null, o = so != null ? so : T ? T.o : null, dk = so != null ? sc.key : T ? T.k : null;
-  const subs = sc && sc.subjects && sc.subjects.length ? window.companionMatch(sc.subjects.map(x => x.name)).map((m, i) => ({ h: m.id ? herOf(m.id) : null, live: sc.subjects[i] })).filter(x => x.h) : [];
-  const list = subs.length ? subs : (T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : []);
+  const T = todayInfo(s), o = T ? T.o : null, dk = T ? T.k : null;
+  const list = T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : [];
   const n = list.length, maxH = n > 1 ? 250 : 380;
   const card = ({ h, live }) => {
     const F = h.f || {}, ht = String(F.height || '').match(/\d{2,3}/), kg = String(F.weight || '').match(/\d+/);
@@ -6001,18 +5970,22 @@ function renderMini() {
         '<div class="mn-live">' + [live.panties ? 'Бельё: ' + esc(live.panties) : '', live.creampies != null ? 'CP ×' + live.creampies : '', live.conception && live.conception !== '—' ? 'Зачатие: ' + esc(live.conception) : ''].filter(Boolean).map(x => '<span>' + x + '</span>').join('') + '</div>' : '') +
       '</div></article>';
   };
-  const tl = so != null && sc.dayType ? sc.dayType : T && T.t ? (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') : '';
-  const head = dk ? '<header class="mn-hd"><b>' + dk.split('-')[0] + '月' + dk.split('-')[1] + '日</b><span>' + esc(tl) + '</span>' + (sc && sc.time ? '<em>' + esc(sc.time) + '</em>' : '') + '</header>' : '';
-  box.innerHTML = head + (list.length ? list.map(card).join('') : '<p class="mn-empty">В сцене пока никого. Девушки появятся по шапке ответа или после лотереи.</p>');
+  const tl = T && T.t ? (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') : '';
+  const head = dk ? '<header class="mn-hd"><b>' + dk.split('-')[0] + '月' + dk.split('-')[1] + '日</b><span>' + esc(tl) + '</span><a class="mn-full" href="#" title="Полный компаньон">⤢</a></header>' : '';
+  box.innerHTML = head + (list.length ? list.map(card).join('') : '<p class="mn-empty">На сегодня дежурных нет. Они появятся после лотереи или записи в журнал.</p>');
 }
-window.companionMini = function (on, scene) {
-  document.body.classList.toggle('mini', !!on); if (scene !== undefined) miniScene = scene;
-  if (on) renderMini();
-};
-window.companionOpenCard = function (id) { document.body.classList.remove('mini'); ui.view = 'scen'; render(); openCard(id); };
-document.addEventListener('click', e => { const c = e.target.closest('#mini .mn-card'); if (c && window.parent !== window) window.parent.dispatchEvent(new CustomEvent('companion-open-her', { detail: c.dataset.her })); });
+function setMini(on) { document.body.classList.toggle('mini', on); if (on) renderMini(); }
+window.addEventListener('hashchange', () => setMini(location.hash === '#mini'));
+document.addEventListener('click', e => {
+  const c = e.target.closest('#mini .mn-card');
+  if (c) { history.replaceState(null, '', location.pathname); setMini(false); ui.view = 'scen'; render(); openCard(c.dataset.her); }
+});
+{ const b = document.createElement('a'); b.id = 'mini-btn'; b.href = '#mini'; b.title = 'Мини-режим'; b.textContent = '◧'; document.body.appendChild(b); }
+/* данные изменились: мини-окно обновляется вместе с основным */
+for (const c of ['scenarios', 'heroines', 'caldays']) window.claude.use('db').then(db => db.collection(c).onSnapshot(() => { if (document.body.classList.contains('mini')) setTimeout(renderMini, 0); }));
+setTimeout(() => setMini(location.hash === '#mini'), 0);
 
-/* Пост Slutify из ответов модели, по дням (только для просмотра в окне дня). */
+/* Пост Slutify, сохранённый из чата ST раньше (только просмотр в окне дня). */
 function storyOf(s, k) { return D.stories.find(x => x.id === calDocId(s.id, k)) || null; }
 function storyHtml(s, k) {
   const st = storyOf(s, k); if (!st || !st.post) return '';
@@ -6025,41 +5998,6 @@ function storyHtml(s, k) {
     (p.likes ? '<div class="sty-lk">❤️ ' + esc(p.likes) + '</div>' : '') + '</div>' : '';
   return '<div class="fld"><span class="lab">Пост дня в Slutify · из чата</span><div class="sty">' + post + '</div></div>';
 }
-window.companionSetStory = async function (k, part) {
-  const s = scen(); if (!s || calOrd(s, k) == null || !part.post) return false;
-  const id = calDocId(s.id, k), old = D.stories.find(x => x.id === id) || {};
-  const doc = { scenarioId: s.id, key: k, post: part.post };
-  if (JSON.stringify(doc.post) === JSON.stringify(old.post || null) && !old.gm) return true;
-  doc.updatedAt = now();
-  return write('stories', id, doc);
-};
-/* Связь с шапкой сообщений ST: сопоставление имён и запись дня. */
-window.companionMatch = function (names) {
-  const s = scen(); if (!s) return [];
-  const norm = x => String(x || '').toLowerCase().replace(/[^a-z぀-ヿ一-鿿 ]/g, ' ').replace(/\s+/g, ' ').trim();
-  const hs = hersIn(s.id);
-  return names.map(n => {
-    const v = norm(n), toks = v.split(' ');
-    const h = hs.find(x => norm(x.name) === v || toks.slice().reverse().join(' ') === norm(x.name))
-      || hs.find(x => [x.nick, ...String((x.f || {}).keys || '').split(',')].map(norm).filter(Boolean).some(k => toks.includes(k)));
-    return h ? { name: n, id: h.id, nick: h.nick || h.name } : { name: n, id: null };
-  });
-};
-window.companionToday = function () { const s = scen(); return s ? { key: s.calToday || '', her: (todayInfo(s) || {}).her || [] } : null; };
-window.companionDayOrd = function (k) { const s = scen(); return s && k ? calOrd(s, k) : null; };
-window.companionDayLabel = function (k) { const s = scen(); return s && calOrd(s, k) != null ? shortDay(s, k) : k; };
-window.companionDayHer = function (k) { const s = scen(); return s ? (calDaysOf(s.id)[k] || {}).her || [] : []; };
-window.companionSetToday = async function (k) {
-  const s = scen(); if (!s || calOrd(s, k) == null) return false;
-  if (!(await write('scenarios', s.id, { calToday: k }, true))) return false;
-  const o = calOrd(s, k); ui.calW = Object.assign({}, ui.calW, { [s.id]: o - wdOf(s, o) }); saveUi(); return true;
-};
-window.companionSetDuty = async function (k, ids) {
-  const s = scen(); if (!s || calOrd(s, k) == null) return false;
-  const x = calDaysOf(s.id)[k] || {}, o = calOrd(s, k);
-  const doc = { scenarioId: s.id, key: k, her: ids.slice(), type: x.type || typeByWd(s, wdOf(s, o)), note: x.note || '', rate: x.rate || 0 }; if (x.frame) doc.frame = x.frame;
-  return write('caldays', calDocId(s.id, k), doc);
-};
 
 render(); startDb();
 })();

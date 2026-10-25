@@ -1,28 +1,4 @@
-/* Мост для расширения ST: состояние дня текстом для промпта. Вставляется в конец основного скрипта компаньона. */
-window.companionState = function () {
-  const s = scen(); if (!s) return null;
-  const T = todayInfo(s); if (!T) return { scenario: s.name || '', text: '' };
-  const hs = hersIn(s.id), nm = h => h.nick || h.name || '?';
-  const ph = h => { if (isPreg(h)) { const w = pregWeek(s, h); return 'pregnant' + (w ? ' (week ' + w + ')' : ''); } const p = phaseAt(s, h, T.o); return p ? PH[p.k][0] + ' ' + PH[p.k][1] + (p.k === 'ovu' ? ' (fertile, high chance)' : '') : 'cycle unknown'; };
-  const cnts = s.counters || [];
-  const lines = [];
-  const [m, d] = T.k.split('-').map(Number), mon = (CAL_ALL.find(x => x[3] === m) || [])[0] || '';
-  lines.push('Today in game: ' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][wdOf(s, T.o)] + ', ' + d + ' ' + ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m - 1] + '.');
-  if (T.t) lines.push('Day type: ' + (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') + (T.t.rule ? '. Rule of the day: ' + T.t.rule : '') + '.');
-  const duty = T.her.map(herOf).filter(Boolean);
-  if (duty.length) duty.forEach(h => {
-    const c = cnts.map(x => ((h.cnt || {})[x.key] || 0) ? x.label + ' ' + h.cnt[x.key] : '').filter(Boolean).join(', ');
-    lines.push('Duty student: ' + nm(h) + ' — ' + ph(h) + '; duties so far: ' + dutyOf(s, h.id) + (c ? '; ' + c : '') + '.');
-  });
-  else lines.push('Duty student: not chosen yet.');
-  const ovu = hs.filter(h => !T.her.includes(h.id) && !isPreg(h) && (phaseAt(s, h, T.o) || {}).k === 'ovu').map(nm);
-  if (ovu.length) lines.push('Also ovulating today: ' + ovu.join(', ') + '.');
-  const preg = hs.filter(h => !T.her.includes(h.id) && isPreg(h)).map(h => nm(h) + (pregWeek(s, h) ? ' (week ' + pregWeek(s, h) + ')' : ''));
-  if (preg.length) lines.push('Pregnant: ' + preg.join(', ') + '.');
-  return { scenario: s.name || '', key: T.k, duty: duty.map(nm), text: lines.join('\n') };
-};
-/* Мини-режим: девушки текущей сцены с фигурой без фона и параметрами. scene приходит из расширения (шапка ответа). */
-let miniScene = null;
+/* Мини-режим (адрес с #mini): дежурные дня с фигурой без фона и параметрами, для узкого окна рядом с чатом. */
 function miniFig(h, maxW, maxH) {
   const o = outfitsOf(h), r = o.find(x => x && x.assetId);
   if (!r) return '<div class="mn-sil" style="height:' + maxH + 'px">' + esc((h.nick || h.name || '?').slice(0, 1)) + '</div>';
@@ -39,9 +15,8 @@ function miniBar(label, v) { return '<div class="mn-bar"><span>' + label + '</sp
 function renderMini() {
   let box = document.getElementById('mini'); if (!box) { box = document.createElement('div'); box.id = 'mini'; document.body.appendChild(box); }
   const s = scen(); if (!s) { box.innerHTML = '<p class="mn-empty">Сценарий не загружен</p>'; return; }
-  const T = todayInfo(s), sc = miniScene, so = sc && sc.key ? calOrd(s, sc.key) : null, o = so != null ? so : T ? T.o : null, dk = so != null ? sc.key : T ? T.k : null;
-  const subs = sc && sc.subjects && sc.subjects.length ? window.companionMatch(sc.subjects.map(x => x.name)).map((m, i) => ({ h: m.id ? herOf(m.id) : null, live: sc.subjects[i] })).filter(x => x.h) : [];
-  const list = subs.length ? subs : (T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : []);
+  const T = todayInfo(s), o = T ? T.o : null, dk = T ? T.k : null;
+  const list = T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : [];
   const n = list.length, maxH = n > 1 ? 250 : 380;
   const card = ({ h, live }) => {
     const F = h.f || {}, ht = String(F.height || '').match(/\d{2,3}/), kg = String(F.weight || '').match(/\d+/);
@@ -57,18 +32,22 @@ function renderMini() {
         '<div class="mn-live">' + [live.panties ? 'Бельё: ' + esc(live.panties) : '', live.creampies != null ? 'CP ×' + live.creampies : '', live.conception && live.conception !== '—' ? 'Зачатие: ' + esc(live.conception) : ''].filter(Boolean).map(x => '<span>' + x + '</span>').join('') + '</div>' : '') +
       '</div></article>';
   };
-  const tl = so != null && sc.dayType ? sc.dayType : T && T.t ? (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') : '';
-  const head = dk ? '<header class="mn-hd"><b>' + dk.split('-')[0] + '月' + dk.split('-')[1] + '日</b><span>' + esc(tl) + '</span>' + (sc && sc.time ? '<em>' + esc(sc.time) + '</em>' : '') + '</header>' : '';
-  box.innerHTML = head + (list.length ? list.map(card).join('') : '<p class="mn-empty">В сцене пока никого. Девушки появятся по шапке ответа или после лотереи.</p>');
+  const tl = T && T.t ? (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') : '';
+  const head = dk ? '<header class="mn-hd"><b>' + dk.split('-')[0] + '月' + dk.split('-')[1] + '日</b><span>' + esc(tl) + '</span><a class="mn-full" href="#" title="Полный компаньон">⤢</a></header>' : '';
+  box.innerHTML = head + (list.length ? list.map(card).join('') : '<p class="mn-empty">На сегодня дежурных нет. Они появятся после лотереи или записи в журнал.</p>');
 }
-window.companionMini = function (on, scene) {
-  document.body.classList.toggle('mini', !!on); if (scene !== undefined) miniScene = scene;
-  if (on) renderMini();
-};
-window.companionOpenCard = function (id) { document.body.classList.remove('mini'); ui.view = 'scen'; render(); openCard(id); };
-document.addEventListener('click', e => { const c = e.target.closest('#mini .mn-card'); if (c && window.parent !== window) window.parent.dispatchEvent(new CustomEvent('companion-open-her', { detail: c.dataset.her })); });
+function setMini(on) { document.body.classList.toggle('mini', on); if (on) renderMini(); }
+window.addEventListener('hashchange', () => setMini(location.hash === '#mini'));
+document.addEventListener('click', e => {
+  const c = e.target.closest('#mini .mn-card');
+  if (c) { history.replaceState(null, '', location.pathname); setMini(false); ui.view = 'scen'; render(); openCard(c.dataset.her); }
+});
+{ const b = document.createElement('a'); b.id = 'mini-btn'; b.href = '#mini'; b.title = 'Мини-режим'; b.textContent = '◧'; document.body.appendChild(b); }
+/* данные изменились: мини-окно обновляется вместе с основным */
+for (const c of ['scenarios', 'heroines', 'caldays']) window.claude.use('db').then(db => db.collection(c).onSnapshot(() => { if (document.body.classList.contains('mini')) setTimeout(renderMini, 0); }));
+setTimeout(() => setMini(location.hash === '#mini'), 0);
 
-/* Пост Slutify из ответов модели, по дням (только для просмотра в окне дня). */
+/* Пост Slutify, сохранённый из чата ST раньше (только просмотр в окне дня). */
 function storyOf(s, k) { return D.stories.find(x => x.id === calDocId(s.id, k)) || null; }
 function storyHtml(s, k) {
   const st = storyOf(s, k); if (!st || !st.post) return '';
@@ -81,38 +60,3 @@ function storyHtml(s, k) {
     (p.likes ? '<div class="sty-lk">❤️ ' + esc(p.likes) + '</div>' : '') + '</div>' : '';
   return '<div class="fld"><span class="lab">Пост дня в Slutify · из чата</span><div class="sty">' + post + '</div></div>';
 }
-window.companionSetStory = async function (k, part) {
-  const s = scen(); if (!s || calOrd(s, k) == null || !part.post) return false;
-  const id = calDocId(s.id, k), old = D.stories.find(x => x.id === id) || {};
-  const doc = { scenarioId: s.id, key: k, post: part.post };
-  if (JSON.stringify(doc.post) === JSON.stringify(old.post || null) && !old.gm) return true;
-  doc.updatedAt = now();
-  return write('stories', id, doc);
-};
-/* Связь с шапкой сообщений ST: сопоставление имён и запись дня. */
-window.companionMatch = function (names) {
-  const s = scen(); if (!s) return [];
-  const norm = x => String(x || '').toLowerCase().replace(/[^a-z぀-ヿ一-鿿 ]/g, ' ').replace(/\s+/g, ' ').trim();
-  const hs = hersIn(s.id);
-  return names.map(n => {
-    const v = norm(n), toks = v.split(' ');
-    const h = hs.find(x => norm(x.name) === v || toks.slice().reverse().join(' ') === norm(x.name))
-      || hs.find(x => [x.nick, ...String((x.f || {}).keys || '').split(',')].map(norm).filter(Boolean).some(k => toks.includes(k)));
-    return h ? { name: n, id: h.id, nick: h.nick || h.name } : { name: n, id: null };
-  });
-};
-window.companionToday = function () { const s = scen(); return s ? { key: s.calToday || '', her: (todayInfo(s) || {}).her || [] } : null; };
-window.companionDayOrd = function (k) { const s = scen(); return s && k ? calOrd(s, k) : null; };
-window.companionDayLabel = function (k) { const s = scen(); return s && calOrd(s, k) != null ? shortDay(s, k) : k; };
-window.companionDayHer = function (k) { const s = scen(); return s ? (calDaysOf(s.id)[k] || {}).her || [] : []; };
-window.companionSetToday = async function (k) {
-  const s = scen(); if (!s || calOrd(s, k) == null) return false;
-  if (!(await write('scenarios', s.id, { calToday: k }, true))) return false;
-  const o = calOrd(s, k); ui.calW = Object.assign({}, ui.calW, { [s.id]: o - wdOf(s, o) }); saveUi(); return true;
-};
-window.companionSetDuty = async function (k, ids) {
-  const s = scen(); if (!s || calOrd(s, k) == null) return false;
-  const x = calDaysOf(s.id)[k] || {}, o = calOrd(s, k);
-  const doc = { scenarioId: s.id, key: k, her: ids.slice(), type: x.type || typeByWd(s, wdOf(s, o)), note: x.note || '', rate: x.rate || 0 }; if (x.frame) doc.frame = x.frame;
-  return write('caldays', calDocId(s.id, k), doc);
-};

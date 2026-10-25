@@ -1,32 +1,21 @@
 <script>
-/* Хранилище компаньона внутри SillyTavern: вместо db/assets артефакта claude.ai.
-   Данные: user/files/companion-db.json (+ копия за день), картинки: user/images/companion/. */
+/* Хранилище компаньона на своём сервере (server.js) вместо db/assets артефакта claude.ai.
+   Данные: data/db.json (+ копия за день), картинки: data/images/. */
 (function () {
-  const P = window.parent !== window ? window.parent : null;
-  const ctx = () => { try { return P && P.SillyTavern ? P.SillyTavern.getContext() : null; } catch (e) { return null; } };
-  const headers = () => { const c = ctx(); return c ? c.getRequestHeaders() : { 'Content-Type': 'application/json' }; };
-  const FILE = 'companion-db.json', IMG = 'companion';
   const S = {}, L = {};
   const clone = o => JSON.parse(JSON.stringify(o));
   const snap = c => { const docs = Object.keys(S[c] || {}).map(id => ({ id, exists: true, data: () => clone(S[c][id]), metadata: {} })); return { docs, size: docs.length, empty: !docs.length, docChanges: () => [] }; };
-  const fire = c => { (L[c] || []).forEach(f => { try { f(snap(c)); } catch (e) { console.error('[companion]', e); } }); try { P && P.dispatchEvent(new CustomEvent('companion-changed')); } catch (e) { /* нет */ } };
-  const b64 = async blob => { const r = new FileReader(); return new Promise((ok, no) => { r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(blob); }); };
-  const ready = fetch('/user/files/' + FILE + '?t=' + Date.now(), { cache: 'no-store' })
+  const fire = c => (L[c] || []).forEach(f => { try { f(snap(c)); } catch (e) { console.error('[companion]', e); } });
+  const ready = fetch('api/db', { cache: 'no-store' })
     .then(r => r.ok ? r.json() : null).then(j => { if (j && j.data) Object.assign(S, j.data); }).catch(() => {});
-  let saveT = 0, dayCopy = '';
-  async function put(name, text) {
-    const r = await fetch('/api/files/upload', { method: 'POST', headers: headers(), body: JSON.stringify({ name, data: await b64(new Blob([text])) }) });
-    if (!r.ok) throw new Error(r.status + ' ' + await r.text());
-  }
+  let saveT = 0;
   function persist() {
     clearTimeout(saveT);
     saveT = setTimeout(async () => {
-      const text = JSON.stringify({ app: 'companion-st', version: 1, savedAt: new Date().toISOString(), data: S });
       try {
-        await put(FILE, text);
-        const d = new Date().toISOString().slice(0, 10);
-        if (dayCopy !== d) { await put('companion-db-' + d + '.json', text); dayCopy = d; }
-      } catch (e) { console.error('[companion] save failed', e); try { P.toastr.error('Компаньон: не сохранилось (' + e.message + ')'); } catch (er) { /* нет */ } }
+        const r = await fetch('api/db', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: S }) });
+        if (!r.ok) throw new Error(r.status + ' ' + await r.text());
+      } catch (e) { console.error('[companion] save failed', e); alert('Компаньон: не сохранилось (' + e.message + ')'); }
     }, 400);
   }
   const db = {
@@ -40,21 +29,22 @@
     }),
   };
   const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
+  const file = id => /\./.test(id) ? id : id + '.png';
   const assets = {
     upload: async (blob, o) => {
       const type = (o && o.type) || blob.type || 'image/png', ext = EXT[type] || 'png';
       const id = 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext;
-      const r = await fetch('/api/images/upload', { method: 'POST', headers: headers(), body: JSON.stringify({ image: await b64(blob), format: ext, ch_name: IMG, filename: id }) });
+      const r = await fetch('api/images/' + id, { method: 'PUT', headers: { 'Content-Type': type }, body: blob });
       if (!r.ok) throw { code: 'upload_failed' };
       return { id, url: window.__cmpBlob(id), sizeBytes: blob.size, contentType: type };
     },
-    delete: async id => { await fetch('/api/images/delete', { method: 'POST', headers: headers(), body: JSON.stringify({ path: 'user/images/' + IMG + '/' + (/\./.test(id) ? id : id + '.png') }) }); return { deleted: true }; },
+    delete: async id => { await fetch('api/images/' + file(id), { method: 'DELETE' }); return { deleted: true }; },
   };
   const downloads = {
     save: async ({ filename, data }) => { const a = document.createElement('a'); a.href = URL.createObjectURL(data); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); },
   };
   /* картинки, перенесённые из артефакта, лежат как <id>.png */
-  window.__cmpBlob = id => id ? '/user/images/' + IMG + '/' + (/\./.test(id) ? id : id + '.png') : '';
+  window.__cmpBlob = id => id ? 'images/' + file(id) : '';
   window.claude = { use: async k => k === 'db' ? db : k === 'assets' ? assets : k === 'downloads' ? downloads : null };
 })();
 </script>

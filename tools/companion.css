@@ -7,7 +7,7 @@ body.mini #mini{display:block;position:fixed;inset:0;z-index:40;overflow:auto;pa
 .mn-hd{display:flex;align-items:baseline;gap:8px;padding:2px 4px 8px;border-bottom:2px solid var(--red);margin-bottom:10px}
 .mn-hd b{font:700 22px/1 var(--hand);color:var(--red)}
 .mn-hd span{font-weight:700}
-.mn-hd em{margin-left:auto;font-style:normal;opacity:.6;font-size:12px}
+.mn-hd em{font-style:normal;opacity:.6;font-size:12px}
 .mn-card{display:flex;gap:8px;align-items:flex-end;padding:8px 8px 10px;margin-bottom:10px;border-radius:8px;background:#fffdf8cc;border:1px dashed #C7343F55;cursor:pointer}
 .mn-card:hover{border-color:var(--red)}
 .mn-card.ovu{box-shadow:0 0 0 2px #f4a7bd88,0 0 18px #f4a7bd66}
@@ -44,3 +44,7 @@ body.mini #mini{display:block;position:fixed;inset:0;z-index:40;overflow:auto;pa
 .sty-gm{background:#FCF9F1;border:1px dashed #C7343F66;border-radius:8px;padding:8px 12px;display:grid;gap:4px;font-size:13px;color:#2B3D73}
 .sty-gm b{color:#C7343F}
 .sty-gm i{display:inline-block;min-width:52px;margin-right:6px;font-style:normal;font-size:11px;color:#C7343F;text-transform:uppercase;letter-spacing:.04em}
+.mn-full{margin-left:auto;text-decoration:none;color:var(--red);font-size:18px;line-height:1}
+#mini-btn{position:fixed;right:12px;bottom:12px;z-index:30;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid #C7343F;color:#C7343F;text-decoration:none;font-size:16px;box-shadow:0 2px 8px #0002}
+body.mini #mini-btn{display:none}
