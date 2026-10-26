@@ -10,25 +10,26 @@
    git clone https://<токен>@github.com/l3525999/silly_companion ~/companion
    cd ~/companion
    ```
-2. Перенести данные и картинки из ST (пути для стандартной установки ST в `~/SillyTavern`):
+2. Перенести данные и картинки из ST, который запущен в Docker (контейнер `sillytavern`):
    ```
-   node server.js import ~/SillyTavern/data/default-user/user/files/companion-db.json ~/SillyTavern/data/default-user/user/images/companion
+   mkdir -p data/import
+   docker cp sillytavern:/home/node/app/data/default-user/user/files/companion-db.json data/import/
+   docker cp sillytavern:/home/node/app/data/default-user/user/images/companion data/import/images
+   docker run --rm -v ~/companion:/app -w /app node:22-alpine node server.js import data/import/companion-db.json data/import/images
    ```
-   Команда напишет, сколько сценариев, девушек, дней и картинок перенесено. Можно перенести и из файла переноса с claude.ai: `node server.js import companion-migration.json`.
-3. Запустить, придумав пароль:
+   Команда напишет, сколько сценариев, девушек, дней и картинок перенесено. Можно перенести и из файла переноса с claude.ai: положить его в `data/import/` и указать вместо `companion-db.json`.
+3. Запустить насовсем (поднимается сам после перезагрузки), придумав пароль:
    ```
-   COMPANION_HOST=0.0.0.0 COMPANION_PASSWORD=придумайте node server.js
+   docker run -d --name companion --restart unless-stopped -p 8787:8787 -e COMPANION_HOST=0.0.0.0 -e COMPANION_PASSWORD=придумайте -v ~/companion:/app -w /app node:22-alpine node server.js
    ```
    Открыть `http://<адрес сервера>:8787/`, браузер спросит логин (любой) и пароль. Если порт закрыт, его нужно открыть в настройках хостинга или файрвола.
-4. Чтобы компаньон работал постоянно и поднимался после перезагрузки, запустить его тем же способом, что и ST. Если ST запущен через pm2:
-   ```
-   COMPANION_HOST=0.0.0.0 COMPANION_PASSWORD=придумайте pm2 start server.js --name companion && pm2 save
-   ```
-5. В ST удалить расширение Companion: «Расширения → Manage extensions → Companion → удалить». Старые данные в ST остаются на месте и больше не используются.
+4. В ST удалить расширение Companion: «Расширения → Manage extensions → Companion → удалить». Старые данные в ST остаются на месте и больше не используются.
+
+Без Docker: на сервере нужен Node.js 18 или новее, команды те же без `docker run … node:22-alpine`, например `COMPANION_HOST=0.0.0.0 COMPANION_PASSWORD=… node server.js`.
 
 ### Обновление
 ```
-cd ~/companion && git pull && pm2 restart companion
+cd ~/companion && git pull && docker restart companion
 ```
 
 ### Настройки
