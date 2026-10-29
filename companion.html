@@ -588,6 +588,62 @@ pre.out{margin:0;white-space:pre-wrap;word-break:break-word;background:var(--bg)
 .cls-kt small{display:block;font:600 9.5px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;opacity:.75;text-align:left}
 .cls-kt b{display:block;font:700 21px/1 Caveat,cursive;text-align:left}
 .cls-kt.sel{outline:3px solid #E2677F;outline-offset:3px}
+.cls-kts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;margin:18px 12px 2px}
+.cls-kts .cls-kt{margin:0}
+.cb-in{display:grid;gap:16px;padding:16px 18px 18px}
+.cb-day{display:flex;align-items:center;gap:4px}
+.cb-g{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px 22px;align-items:center}
+.cb-n{display:grid;justify-items:start;color:var(--ink)}
+.cb-n small,.cb-tg small{font:700 10px var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--fg2)}
+.cb-n b{font:700 64px/.9 var(--hand);color:var(--red)}
+.cb-n span{font:700 18px var(--hand);opacity:.7}
+.cb-m{min-width:0;display:grid;gap:6px}
+.cb-bar{position:relative;height:16px;border-radius:9px;background:#EFE7D6;box-shadow:inset 0 1px 3px rgba(60,40,20,.25);overflow:hidden}
+.cb-bar>span{position:absolute;inset:0 auto 0 0;border-radius:9px;background:linear-gradient(90deg,#E9A3B2,#C7343F)}
+.cb-bar i{position:absolute;top:0;bottom:0;width:2px;background:rgba(252,249,241,.9)}
+.cb-ts{position:relative;height:34px}
+.cb-ts span{position:absolute;transform:translateX(-50%);display:grid;justify-items:center;font:600 10.5px/1.2 var(--f-ui);color:#A79F90;white-space:nowrap}
+.cb-ts span b{font:700 12px "M PLUS Rounded 1c",serif;letter-spacing:.06em}
+.cb-ts span.past{color:#8C7F6A}
+.cb-ts span.on{color:var(--red)}
+.cb-fx{margin:0;display:flex;align-items:center;gap:10px;font:700 22px var(--hand);color:var(--ink)}
+.cb-fx .stp{display:inline-block;transform:rotate(-5deg);border:2px solid var(--red);color:var(--red);border-radius:4px;padding:0 7px;font:700 15px "M PLUS Rounded 1c",serif;letter-spacing:.08em}
+.cb-side{display:grid;gap:8px;justify-items:end;text-align:right}
+.cb-tg{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;justify-content:flex-end;color:var(--ink)}
+.cb-tg small{flex-basis:100%}
+.cb-tg b{font:700 40px/1 var(--hand);color:var(--red)}
+.cb-tg>span{font:700 18px var(--hand)}
+.cb-tgb{display:inline-flex;gap:2px}
+.cb-tgb .btn{padding:2px 9px}
+.cb-hint{font-size:11px;max-width:190px}
+.cb-b{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.cb-col{display:grid;align-content:start;gap:8px;padding:8px;border-radius:5px;background:rgba(43,61,115,.04);border-top:4px solid #CFC7B6}
+.cb-col.k-heard{border-top-color:#E7C77A}.cb-col.k-int{border-top-color:#E9A3B2}.cb-col.k-joined{border-top-color:#C7343F;background:rgba(199,52,63,.06)}.cb-col.k-against{border-top-color:#7E8796}
+.cb-ch{display:flex;align-items:baseline;gap:6px;color:var(--ink)}
+.cb-ch b{font:700 15px "M PLUS Rounded 1c",serif;letter-spacing:.06em}
+.cb-ch span{font:700 17px var(--hand)}
+.cb-ch em{margin-left:auto;font:700 16px var(--hand);font-style:normal;color:var(--red)}
+.cb-ch small{font:600 10px var(--f-ui);color:var(--fg2)}
+.cb-e{margin:0;color:#B5AC9A;font:700 18px var(--hand);text-align:center}
+.cb-c{display:grid;gap:5px;padding:7px;border-radius:4px;background:#FFFDF8;box-shadow:0 1px 2px rgba(60,40,20,.15)}
+.cb-c select,.cb-c input{font-size:12px;padding:4px 6px;min-width:0;width:100%}
+.cb-who{display:flex;align-items:center;gap:6px;border:0;background:none;padding:0;cursor:pointer;color:var(--ink);font:inherit;text-align:left}
+.cb-who b{font:700 19px/1 var(--hand)}
+.cb-ev{display:grid;gap:8px;border-top:1px dashed #CFC7B6;padding-top:12px}
+.cb-evh{display:flex;align-items:baseline;gap:10px;color:var(--ink)}
+.cb-evh b{font:700 15px "M PLUS Rounded 1c",serif;letter-spacing:.1em}
+.cb-evh span{font-size:12px;color:var(--fg2)}
+.cb-ev ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.cb-ev li{display:flex;align-items:baseline;gap:10px;font:700 18px var(--hand);color:var(--ink)}
+.cb-ev li em{font-style:normal;color:#2E7D4F;min-width:34px}
+.cb-ev li em.neg{color:var(--red)}
+.cb-ev li small{font:600 11px var(--f-ui);color:var(--fg2)}
+.cb-ev li button{margin-left:auto;border:0;background:none;color:var(--fg2);cursor:pointer;font-size:16px}
+.cb-add{display:flex;gap:8px;flex-wrap:wrap}
+.cb-add input[type=text]{flex:1 1 220px}
+.cb-add input[type=number]{width:80px}
+@media (max-width:900px){.cb-b{grid-template-columns:repeat(2,minmax(0,1fr))}.cb-g{grid-template-columns:minmax(0,1fr)}.cb-side{justify-items:start;text-align:left}.cb-tg{justify-content:flex-start}}
+@media (max-width:520px){.cb-b{grid-template-columns:minmax(0,1fr)}.cb-ts span{font-size:9px}.cb-ts span:not(.on){color:transparent}.cb-ts span:not(.on) b{color:#A79F90}}
 .cls-kt.empty{background:none;border:2px dashed #B5A585;box-shadow:none;color:#8B7B5E}
 .cls-rm{display:grid;grid-template-columns:20px minmax(0,1fr) 20px;gap:16px;padding-top:14px}
 .cls-win{background:repeating-linear-gradient(180deg,#C9E0EC 0 74px,#8C7A60 74px 78px);border:3px solid #8C7A60;border-left:0;border-radius:0 3px 3px 0}
@@ -4435,6 +4491,8 @@ const scen = () => D.scenarios.find(s => s.id === ui.scenId) || D.scenarios[0] |
 const herOf = id => D.heroines.find(h => h.id === id);
 const promptOf = id => D.prompts.find(p => p.id === id);
 const heroOf = sid => D.heroines.find(h => h.scenarioId === sid && h.isHero) || null;
+const herosOf = sid => D.heroines.filter(h => h.scenarioId === sid && h.isHero).sort((a, b) => (a.n || 0) - (b.n || 0) || String(a.name || '').localeCompare(String(b.name || '')));
+const isClub = s => !!s && s.kind === 'club';
 const hersIn = sid => D.heroines.filter(h => h.scenarioId === sid && !h.isHero).sort((a, b) => (a.n || 0) - (b.n || 0) || a.name.localeCompare(b.name));
 const imgsOfHer = id => D.images.filter(i => i.heroineId === id).sort(byNew);
 const imgsOfPrompt = id => D.images.filter(i => i.promptId === id).sort(byNew);
@@ -4665,13 +4723,14 @@ function renderScen() {
   const hs = hersIn(s.id);
   const head = '<div class="scen-head"><div><span class="lab">' + (ui.mode === 'play' ? 'Сценарий' : 'Мастерская · сценарий') + '</span><h1>' + esc(s.name) + '</h1></div><span class="sp"></span>';
   if (ui.mode !== 'play') return head + '<button class="btn ghost" data-act="scen-settings">Настройки сценария</button></div>' + renderAbout(s) + renderHeroines(s, hs);
-  if (!['calendar', 'class', 'lineup'].includes(ui.scenTab)) ui.scenTab = 'calendar';
-  let h = head + '<div class="seg" role="group" aria-label="Вид">' + [['calendar', 'Журнал'], ['class', 'Класс'], ['lineup', 'Медосмотр']].map(([k, l]) => '<button type="button" data-scentab="' + k + '" aria-pressed="' + (ui.scenTab === k) + '">' + l + '</button>').join('') + '</div></div>';
-  h += (ui.scenTab === 'calendar' ? renderWeek(s, hs) : ui.scenTab === 'lineup' ? renderLineup(s, hs) : renderClass(s, hs, heroOf(s.id))) + kjNote(ui.scenTab);
+  const club = isClub(s), tabs = club ? [['club', 'Клуб'], ['class', 'Класс'], ['lineup', 'Медосмотр']] : [['calendar', 'Журнал'], ['class', 'Класс'], ['lineup', 'Медосмотр']];
+  if (!tabs.some(x => x[0] === ui.scenTab)) ui.scenTab = tabs[0][0];
+  let h = head + '<div class="seg" role="group" aria-label="Вид">' + tabs.map(([k, l]) => '<button type="button" data-scentab="' + k + '" aria-pressed="' + (ui.scenTab === k) + '">' + l + '</button>').join('') + '</div></div>';
+  h += (ui.scenTab === 'club' ? renderClub(s, hs) : ui.scenTab === 'calendar' ? renderWeek(s, hs) : ui.scenTab === 'lineup' ? renderLineup(s, hs) : renderClass(s, hs, heroOf(s.id))) + kjNote(ui.scenTab);
   return h;
 }
 function renderLineup(s, hs) {
-  const hero = heroOf(s.id), all = hero ? hs.concat([hero]) : hs;
+  const heroes = herosOf(s.id), all = hs.concat(heroes), club = isClub(s);
   const L = Object.assign({ view: 0, out: 0, sort: 'n', bg: 'cut' }, ui.lu || {}); if (L.out >= Math.max(1, ...all.map(h => outfitsOf(h).length))) L.out = 0;
   const cm = h => { const m = String((h.f || {}).height || '').match(/\d{2,3}/); return m ? +m[0] : null; };
   const tO = s.calToday ? calOrd(s, s.calToday) : null, duty = {}; D.caldays.filter(x => x.scenarioId === s.id).forEach(x => (x.her || []).forEach(id => { duty[id] = (duty[id] || 0) + 1; }));
@@ -4679,14 +4738,14 @@ function renderLineup(s, hs) {
   let list = hs.slice(); if (L.sort === 'h') list.sort((a, b) => (cm(a) || 0) - (cm(b) || 0)); else if (L.sort === 'r') list.sort((a, b) => (b.rating || 0) - (a.rating || 0) || (a.n || 0) - (b.n || 0)); else if (L.sort === 'd') list.sort((a, b) => (duty[b.id] || 0) - (duty[a.id] || 0) || (a.n || 0) - (b.n || 0)); else if (L.sort === 'o') list.sort((a, b) => isOv(b) - isOv(a) || (a.n || 0) - (b.n || 0)); else list.sort((a, b) => (a.n || 0) - (b.n || 0));
   const maxO = Math.max(1, ...all.map(h => outfitsOf(h).length)), CN = s.counters || [], capH = CN.length ? 96 : 76;
   const rankOf = {}; if (L.sort === 'r') list.filter(h => h.rating).slice(0, 3).forEach((h, i) => { rankOf[h.id] = i + 1; });
-  if (!list.length && !hero) return '<div class="card empty">В сценарии пока нет героинь.</div>';
+  if (!list.length && !heroes.length) return '<div class="card empty">В сценарии пока нет героинь.</div>';
   const known = all.map(cm).filter(Boolean), maxH = Math.max(170, ...known), PX = (window.innerWidth < 640 ? 300 : 440) / maxH;
   const seg = (k, opts) => '<div class="seg" role="group">' + opts.map(([v, t]) => '<button type="button" data-lu="' + k + ':' + v + '" aria-pressed="' + (String(L[k]) === String(v)) + '">' + t + '</button>').join('') + '</div>';
-  const ctl = '<div class="lu-ctl">' + seg('view', [[0, 'Спереди'], [1, 'Сбоку'], [2, 'Сзади']]) + (maxO > 1 ? seg('out', Array.from({ length: maxO }, (_, i) => [i, i ? String(i + 1) : 'Наряд 1'])) : '') + seg('sort', [['n', 'По номеру'], ['h', 'По росту'], ['r', 'Рейтинг'], ['d', 'Дежурства'], ['o', 'Сначала в овуляции']]) + '<span class="muted" style="font-size:11.5px">Рост из анкеты. Фигуры компаньон находит на арте сам, поправить можно в анкете кнопкой «Фигуры», там же можно оставить фон для отдельного арта.</span></div>';
+  const ctl = '<div class="lu-ctl">' + seg('view', [[0, 'Спереди'], [1, 'Сбоку'], [2, 'Сзади']]) + (maxO > 1 ? seg('out', Array.from({ length: maxO }, (_, i) => [i, i ? String(i + 1) : 'Наряд 1'])) : '') + seg('sort', [['n', 'По номеру'], ['h', 'По росту'], ['r', 'Рейтинг']].concat(club ? [] : [['d', 'Дежурства']], [['o', 'Сначала в овуляции']])) + '<span class="muted" style="font-size:11.5px">Рост из анкеты. Фигуры компаньон находит на арте сам, поправить можно в анкете кнопкой «Фигуры», там же можно оставить фон для отдельного арта.</span></div>';
   const todo = [];
   const lines = []; for (let c = 10; c <= maxH; c += 10) lines.push('<i class="' + (c % 50 ? 'mn' : 'mj') + '" style="bottom:' + Math.round(c * PX + capH) + 'px"><span>' + c + '</span></i>');
   const med = h => { if (h.isHero) return ''; const p = phOf(h), w = pregWeek(s, h), n = duty[h.id] || 0, a = [];
-    a.push('<span title="Дежурств в журнале">дежурств ' + n + '</span>');
+    if (!club) a.push('<span title="Дежурств в журнале">дежурств ' + n + '</span>');
     if (isPreg(h)) a.push('<span class="pg" title="Беременна">беременна' + (w ? ', ' + w + ' нед.' : '') + '</span>'); else if (p && PH[p.k]) a.push('<span' + (p.k === 'ovu' ? ' class="ov"' : '') + ' title="' + PH[p.k][2] + ' сегодня">' + ({ fol: 'фоллик.', lut: 'лютеин.' }[p.k] || PH[p.k][2]) + '</span>');
     return '<span class="lu-med">' + a.join('') + '</span>'; };
   const figOf = h => {
@@ -4710,7 +4769,7 @@ function renderLineup(s, hs) {
     return '<button type="button" class="lu-f' + (h.isHero ? ' hero' : '') + (isOv(h) ? ' ovu' : '') + '" data-her="' + h.id + '" title="' + esc(h.name) + (c ? ', ' + c + ' см' : '') + '">' + badge + fig + tape + '<span class="lu-cap" style="height:' + capH + 'px">' + (warn ? '<i class="wn" title="Фигуры нашлись неуверенно, проверьте в анкете"></i>' : '') + '<b class="nm">' + hanko(h) + esc(h.nick || h.name) + '</b>' + (pp ? '<span class="lu-pp">' + esc(pp) + '</span>' : '') + med(h) +
       (CN.length && !h.isHero ? '<span class="lu-chips">' + CN.map(x => '<span title="' + esc(x.label || '') + '">' + esc(x.label || x.emoji || '•') + ' ' + ((h.cnt || {})[x.key] || 0) + '</span>').join('') + '</span>' : '') + '</span></button>';
   };
-  const figs = (hero ? figOf(hero) + (list.length ? '<span class="lu-div" aria-hidden="true"></span>' : '') : '') + list.map(figOf).join('');
+  const figs = (heroes.length ? heroes.map(figOf).join('') + (list.length ? '<span class="lu-div" aria-hidden="true"></span>' : '') : '') + list.map(figOf).join('');
   if (todo.length) setTimeout(() => todo.forEach(([hid, k]) => ensureFigs(hid, k)), 0);
   if (cutQueue.size) setTimeout(runCuts, 0);
   const hd = '<div class="jr-hd"><span class="jp">身体測定</span><span class="ru">Медосмотр класса · ' + list.length + ' уч.</span><span class="sp"></span>' + (s.calToday ? '<span class="dt">' + esc(calLabel(s, s.calToday)) + '</span>' : '') + '</div>';
@@ -5037,10 +5096,15 @@ function renderClass(s, hs, hero) {
   const T = todayInfo(s), duty = T ? T.her : [], w = !!db, mv = seatMv && seatMv.sid === s.id ? seatMv : null, list = seatOrd(hs);
   const nd = Math.max(1, list.length), cols = window.innerWidth < 640 ? (nd <= 9 ? 3 : 4) : nd <= 8 ? 4 : nd <= 10 ? 5 : nd <= 18 ? 6 : 7;
   const md = T ? T.k.split('-').map(Number) : null;
-  const board = '<div class="cls-bd"><div class="cls-bd-l">' + (T ? '<b>' + md[0] + '月' + md[1] + '日 (' + WDJ[wdOf(s, T.o)] + ')</b><span>' + esc(WDL[wdOf(s, T.o)]) + ', ' + esc(shortDay(s, T.k)) + '</span>' : '<b>—</b><span>день в игре не выбран</span>') + '</div>' +
+  let board = '<div class="cls-bd"><div class="cls-bd-l">' + (T ? '<b>' + md[0] + '月' + md[1] + '日 (' + WDJ[wdOf(s, T.o)] + ')</b><span>' + esc(WDL[wdOf(s, T.o)]) + ', ' + esc(shortDay(s, T.k)) + '</span>' : '<b>—</b><span>день в игре не выбран</span>') + '</div>' +
     '<div class="cls-bd-c">' + (T && T.t ? '<b>' + esc(T.t.label || '') + '</b>' + (T.t.rule ? '<span>' + esc(T.t.rule) + '</span>' : '') : '<b>' + esc(s.name || '') + '</b>') + '</div>' +
     '<div class="cls-bd-r"><span>日直</span><div>' + (duty.length ? duty.map(id => '<b>' + esc((herOf(id) || {}).nick || '') + '</b>').join('') : '<b>—</b>') + '</div></div></div>';
-  const kyo = hero ? '<button type="button" class="cls-kt' + (hero.id === ui.herId && !mv ? ' sel' : '') + '" data-her="' + hero.id + '">' + faceHtml(hero, 30) + '<span><small>教卓 · Licensed Partner</small><b>' + esc(hero.name || 'Главный герой') + '</b></span></button>'
+  const club = isClub(s), CI = club ? clubInfo(s, hs) : null;
+  if (club) board = '<div class="cls-bd"><div class="cls-bd-l">' + (T ? '<b>' + md[0] + '月' + md[1] + '日 (' + WDJ[wdOf(s, T.o)] + ')</b><span>' + esc(WDL[wdOf(s, T.o)]) + ', ' + esc(shortDay(s, T.k)) + '</span>' : '<b>—</b><span>день в игре не выбран</span>') + '</div>' +
+    '<div class="cls-bd-c"><b>交流部 · ' + esc(s.name || '') + '</b><span>' + esc(CI.tier[1]) + ' · ' + CI.idx + '/100</span></div>' +
+    '<div class="cls-bd-r"><span>部員</span><div>' + (CI.joined.length ? CI.joined.map(h => '<b>' + esc(h.nick || h.name || '') + '</b>').join('') : '<b>—</b>') + '</div></div></div>';
+  const kyo = club ? '<div class="cls-kts">' + (herosOf(s.id).map(b => '<button type="button" class="cls-kt' + (b.id === ui.herId && !mv ? ' sel' : '') + '" data-her="' + b.id + '">' + faceHtml(b, 30) + '<span><small>' + esc((b.f || {}).role || 'член клуба') + '</small><b>' + esc(b.name || 'Герой') + '</b></span></button>').join('') || '<div class="cls-kt empty"><span><small>男子</small><b>Героев пока нет</b></span></div>') + '</div>'
+    : hero ? '<button type="button" class="cls-kt' + (hero.id === ui.herId && !mv ? ' sel' : '') + '" data-her="' + hero.id + '">' + faceHtml(hero, 30) + '<span><small>教卓 · Licensed Partner</small><b>' + esc(hero.name || 'Главный герой') + '</b></span></button>'
     : '<div class="cls-kt empty"><span><small>教卓</small><b>Licensed Partner</b></span></div>';
   const desk = h => {
     const p = T ? phaseAt(s, h, T.o) : null, on = duty.includes(h.id), sel = mv ? mv.pick === h.id : h.id === ui.herId, ov = p && p.k === 'ovu';
@@ -5051,6 +5115,48 @@ function renderClass(s, hs, hero) {
   return '<section class="cls' + (mv ? ' mv' : '') + '">' + board + kyo + '<div class="cls-rm"><div class="cls-win" aria-hidden="true"></div><div class="cls-g" style="--cols:' + cols + '">' + list.map(desk).join('') + add + '</div><div class="cls-dr" aria-hidden="true"></div></div>' +
     '<div class="cls-ctl"><span class="lab">座席表 · Класс · ' + list.length + '</span>' + (mv ? '<span class="hint">Нажми две парты, чтобы поменять их местами</span>' : '') + '<span class="sp"></span>' + (w && list.length > 1 ? '<button class="btn ' + (mv ? 'pri' : 'ghost') + '" data-act="seat-mv">' + (mv ? 'Готово' : 'Пересадить') + '</button>' : '') + '</div></section>';
 }
+
+/* ---------- клуб: доска набора и индекс ---------- */
+const CST = [['none', 'не знает', '知らない', 0], ['heard', 'слышала', '噂', 5], ['int', 'интересуется', '興味', 10], ['joined', 'вступила', '入部', 20], ['against', 'против', '反対', -10]];
+const CTIER = [[0, 'Подозрительный клуб', '怪しい部', 'Girls avoid the club room and Akane threatens to shut the club down.'], [20, 'Странный клуб', '変な部', 'Girls whisper about the club and peek in out of curiosity, but nobody admits interest.'], [40, 'Тема для разговоров', '話題の部', 'The club is a topic in class: girls argue about it and some drop by on their own.'], [60, 'Популярный клуб', '人気の部', 'Girls ask to join; Akane gives the club a budget and stops checking every report.'], [80, 'Легенда академии', '伝説の部', 'Other classes know the club, and Akane turns a blind eye to almost anything that happens in the club room.']];
+const clubSt = h => { const v = (h.club || {}).st; return CST.some(x => x[0] === v) ? v : 'none'; };
+function clubInfo(s, hs) {
+  const c = s.club || {}, adj = Array.isArray(c.adj) ? c.adj : [], pts = hs.reduce((a, h) => a + CST.find(x => x[0] === clubSt(h))[3], 0) + adj.reduce((a, x) => a + (+x.v || 0), 0);
+  const idx = Math.max(0, Math.min(100, pts)), ti = CTIER.reduce((a, t, i) => idx >= t[0] ? i : a, 0);
+  return { idx, ti, tier: CTIER[ti], adj, target: Math.max(1, +c.target || 5), joined: hs.filter(h => clubSt(h) === 'joined') };
+}
+function clubSt4(s, hs) {
+  const CI = clubInfo(s, hs), boys = herosOf(s.id), nm = h => h.name || h.nick || '?', by = k => hs.filter(h => clubSt(h) === k).map(nm);
+  const L = ['[Exchange Club standing]', 'Club index: ' + CI.idx + '/100, tier ' + (CI.ti + 1) + ' of 5: ' + ['Suspicious club', 'Strange club', 'Talk of the class', 'Popular club', 'Academy legend'][CI.ti] + '.', 'Effect: ' + CI.tier[3],
+    'Members: ' + boys.map((b, i) => nm(b) + (i ? '' : ' (head)')).concat(by('joined')).join(', ') + '.'];
+  [['int', 'Interested'], ['heard', 'Heard of it'], ['against', 'Against it']].forEach(([k, t]) => { const a = by(k); if (a.length) L.push(t + ': ' + a.join(', ') + '.'); });
+  return L.join('\n');
+}
+function renderClub(s, hs) {
+  const CI = clubInfo(s, hs), boys = herosOf(s.id), w = !!db, T = todayInfo(s);
+  const hd = '<div class="jr-hd"><span class="jp">部室</span><span class="ru">交流部 · доска набора</span><span class="sp"></span><span class="cb-day">' + (w ? '<button type="button" class="btn ghost" data-act="club-day" data-v="-1" aria-label="Предыдущий день">‹</button>' : '') + '<span class="dt">' + (T ? esc(calLabel(s, T.k)) : 'день не выбран') + '</span>' + (w ? '<button type="button" class="btn ghost" data-act="club-day" data-v="1" aria-label="Следующий день">›</button>' : '') + '</span></div>';
+  const ticks = CTIER.slice(1).map(t => '<i style="left:' + t[0] + '%"></i>').join('');
+  const gauge = '<div class="cb-g"><div class="cb-n"><small>交流指数 · индекс клуба</small><b>' + CI.idx + '</b><span>/100</span></div>' +
+    '<div class="cb-m"><div class="cb-bar" role="img" aria-label="Индекс ' + CI.idx + ' из 100"><span style="width:' + CI.idx + '%"></span>' + ticks + '</div>' +
+    '<div class="cb-ts">' + CTIER.map((t, i) => '<span class="' + (i === CI.ti ? 'on' : i < CI.ti ? 'past' : '') + '" style="left:' + (t[0] + 10) + '%"><b>' + t[2] + '</b>' + esc(t[1]) + '</span>').join('') + '</div>' +
+    '<p class="cb-fx"><span class="stp">' + CI.tier[2] + '</span>' + esc(CI.tier[1]) + '</p></div>' +
+    '<div class="cb-side"><div class="cb-tg"><small>入部 · вступили</small><b>' + CI.joined.length + '</b><span>из ' + CI.target + '</span>' + (w ? '<span class="cb-tgb"><button type="button" class="btn ghost" data-act="club-tgt" data-v="-1" aria-label="Меньше">−</button><button type="button" class="btn ghost" data-act="club-tgt" data-v="1" aria-label="Больше">+</button></span>' : '') + '</div>' +
+    '<button class="btn pri" data-act="club-st">Для ST</button><span class="muted cb-hint">Копирует запись для Lorebook «Club standing»</span></div></div>';
+  const boyOpt = v => '<option value="">кто занимается: никто</option>' + boys.map(b => '<option value="' + b.id + '"' + (v === b.id ? ' selected' : '') + '>' + esc(b.name || 'Герой') + '</option>').join('');
+  const card = h => { const c = h.club || {}, b = boys.find(x => x.id === c.boy);
+    return '<div class="cb-c st-' + clubSt(h) + '"><button type="button" class="cb-who" data-her="' + h.id + '">' + hanko(h) + faceHtml(h, 30) + '<b>' + esc(h.nick || h.name) + '</b></button>' +
+      '<select data-club="st" data-id="' + h.id + '" aria-label="Статус"' + (w ? '' : ' disabled') + '>' + CST.map(x => '<option value="' + x[0] + '"' + (x[0] === clubSt(h) ? ' selected' : '') + '>' + x[2] + ' · ' + x[1] + '</option>').join('') + '</select>' +
+      '<select data-club="boy" data-id="' + h.id + '" aria-label="Кто из героев занимается"' + (w ? '' : ' disabled') + '>' + boyOpt(c.boy || '') + '</select>' +
+      '<input type="text" data-club="note" data-id="' + h.id + '" value="' + esc(c.note || '') + '" placeholder="заметка' + (b ? ', ' + esc(b.name) : '') + '" aria-label="Заметка"' + (w ? '' : ' disabled') + '></div>'; };
+  const cols = CST.map(x => { const g = hs.filter(h => clubSt(h) === x[0]);
+    return '<div class="cb-col k-' + x[0] + '"><div class="cb-ch"><b>' + x[2] + '</b><span>' + x[1] + '</span><em>' + g.length + '</em>' + (x[3] ? '<small>' + (x[3] > 0 ? '+' : '') + x[3] + '</small>' : '') + '</div>' + (g.map(card).join('') || '<p class="cb-e">—</p>') + '</div>'; }).join('');
+  const ev = '<div class="cb-ev"><div class="cb-evh"><b>出来事</b><span>События: ручные очки поверх доски</span></div>' +
+    (CI.adj.length ? '<ul>' + CI.adj.map(x => '<li><em class="' + ((+x.v || 0) < 0 ? 'neg' : '') + '">' + ((+x.v || 0) > 0 ? '+' : '') + (+x.v || 0) + '</em><span>' + esc(x.t || '') + '</span>' + (x.at ? '<small>' + esc(shortDay(s, x.at)) + '</small>' : '') + (w ? '<button type="button" data-act="club-adj-del" data-id="' + esc(x.id) + '" aria-label="Удалить">×</button>' : '') + '</li>').join('') + '</ul>' : '<p class="muted">Пока ничего. Например: «провалили ревизию −10» или «Каору подписала отчёт +10».</p>') +
+    (w ? '<div class="cb-add"><input type="text" id="cb-t" placeholder="что случилось" aria-label="Событие"><input type="number" id="cb-v" value="5" step="1" aria-label="Очки"><button class="btn" data-act="club-adj-add">Добавить</button></div>' : '') + '</div>';
+  return '<div class="mdw cb">' + hd + '<div class="cb-in">' + gauge + (hs.length ? '<div class="cb-b">' + cols + '</div>' : '<div class="card empty">Девушек в сценарии пока нет. Добавьте их в Мастерской: на доске появляются все героини сценария.</div>') + ev + '</div></div>';
+}
+async function clubSet(h, k, v) { const c = Object.assign({}, h.club || {}, { [k]: v }); if (await write('heroines', h.id, { club: c }, true)) h.club = c; }
+async function clubSave(s, patch) { const c = Object.assign({}, s.club || {}, patch); if (await write('scenarios', s.id, { club: c }, true)) { s.club = c; render(); } }
 /* ---------- мини-профиль: медкарта и шкафчик ---------- */
 const TP = ['M3 3.5H17', 'M10 3.5V17', 'M10 10H15.5', 'M5 9.5V17', 'M2 17H18'];
 const tally = n => { if (!n) return '<span class="tly"><small>0</small></span>'; const g = []; for (let i = 0; i < n && g.length < 8; i += 5) g.push('<svg viewBox="0 0 20 20" aria-hidden="true">' + TP.slice(0, Math.min(5, n - i)).map(x => '<path d="' + x + '"/>').join('') + '</svg>'); return '<span class="tly" title="' + n + '">' + g.join('') + '<small>' + n + '</small></span>'; };
@@ -5059,6 +5165,7 @@ const rankHtml = (s, h) => { if (h.isHero) return ''; const n = dutyOf(s, h.id),
 const KJ = {
   calendar: [['学級日誌', 'журнал дежурств класса'], ['月 火 水 木 金 土 日', 'пн, вт, ср, чт, пт, сб, вс'], ['危険日', 'опасный день: дежурная в овуляции'], ['命中', 'попадание: тест положительный'], ['秀 優 良 可 不可', 'оценка дня 5, 4, 3, 2, 1'], ['排', 'овуляция'], ['生', 'месячные'], ['妊', 'беременность'], ['誕', 'день рождения'], ['検印', 'проверено'], ['печать в кружке', 'фамилия девушки']],
   class: [['座席表', 'схема рассадки'], ['黒板', 'на доске: дата, тип и правило дня'], ['4月9日 (木)', '9 апреля, четверг'], ['日直', 'дежурная сегодня'], ['教卓', 'учительский стол'], ['排', 'овуляция'], ['生', 'месячные'], ['妊', 'беременность'], ['печать в кружке', 'фамилия девушки']],
+  club: [['部室', 'клубная комната'], ['交流部', 'клуб общения, Exchange Club'], ['交流指数', 'индекс клуба'], ['知らない', 'не знает о клубе'], ['噂', 'слышала'], ['興味', 'интересуется'], ['入部', 'вступила'], ['反対', 'против'], ['部員', 'члены клуба'], ['печать в кружке', 'фамилия девушки']],
   lineup: [['身体測定', 'медосмотр'], ['排', 'овуляция сегодня'], ['красные пунктиры', 'грудь, талия, бёдра'], ['печать в кружке', 'фамилия девушки']],
   card: [['下駄箱', 'шкафчик'], ['新人', 'новенькая, 1 дежурство'], ['常連', 'постоянная, 2'], ['専属', 'личная дежурная, 3 и больше'], ['正', 'пять палочек = 5'], ['妊娠検査', 'тест на беременность'], ['陽性', 'положительный'], ['陰性', 'отрицательный'], ['排 生 妊', 'овуляция, месячные, беременность'], ['直', 'дежурная']]
 };
@@ -5072,7 +5179,7 @@ function drawCard() {
   const fields = h.isHero ? fld('Роль', v('role'), 1) + fld('Рост', v('height'))
     : fld('День рождения', bd) + fld('Знак', v('sign')) + fld('Кровь', v('blood')) + fld('Рост', v('height')) + fld('Вес', v('weight')) + fld('BWH', v('bwh')) + fld('Cup', v('cup'));
   const pw = pregWeek(s, h), last = (h.tests || []).slice(-1)[0];
-  const st = h.isHero ? '' : '<div class="mc-st"><span><small>Сегодня</small> ' + (isPreg(h) ? ik('preg') + ' беременна' + (pw ? ', ' + pw + '-я неделя' : '') : p ? (ik(p.k) || '') + ' ' + PH[p.k][2] : '—') + '</span><span><small>Дежурств</small> ' + dutyOf(s, h.id) + '</span>' + (T && T.her.includes(h.id) ? '<span>' + ik('dt') + ' дежурная сегодня</span>' : '') + '</div>';
+  const st = h.isHero ? '' : '<div class="mc-st"><span><small>Сегодня</small> ' + (isPreg(h) ? ik('preg') + ' беременна' + (pw ? ', ' + pw + '-я неделя' : '') : p ? (ik(p.k) || '') + ' ' + PH[p.k][2] : '—') + '</span>' + (isClub(s) ? '<span><small>Клуб</small> ' + esc(CST.find(x => x[0] === clubSt(h))[1]) + '</span>' : '<span><small>Дежурств</small> ' + dutyOf(s, h.id) + '</span>') + (T && T.her.includes(h.id) ? '<span>' + ik('dt') + ' дежурная сегодня</span>' : '') + '</div>';
   const cn = CN.length ? '<div class="mc-cs">' + CN.map(x => '<span class="mc-c"><span>' + esc(x.label || x.emoji || x.key) + '</span>' + tally((h.cnt || {})[x.key] || 0) + (w ? '<button type="button" data-act="mc-cnt" data-k="' + esc(x.key) + '" data-dv="-1" aria-label="' + esc(x.label || '') + ' минус один">−</button><button type="button" class="pl" data-act="mc-cnt" data-k="' + esc(x.key) + '" data-dv="1" aria-label="' + esc(x.label || '') + ' плюс один">+</button>' : '') + '</span>').join('') + '</div>' : '';
   const test = h.isHero ? '' : '<div class="mc-t"><button class="btn" data-act="mc-pt"><b>妊娠検査</b>Тест на беременность</button>' + (last ? '<span class="stp ' + (last.pos ? 'pos' : 'neg') + '" title="Последний тест: ' + (last.pos ? 'две полоски' : 'одна полоска') + '"><b>' + (last.pos ? '陽性' : '陰性') + '</b>' + (last.at ? '<small>' + esc(shortDay(s, last.at)) + '</small>' : '') + '</span>' : '') + '</div>';
   const fr = h.isHero ? [] : framesOf(s, h.id), fids = new Set(fr.map(x => frameOf(x).id));
@@ -5091,13 +5198,13 @@ function drawCard() {
 let edit = null;
 function renderHeroines(s, hs) {
   if (edit && edit.isNew && edit.data.scenarioId === s.id) hs = hs.concat([edit.data]);
-  const hero = heroOf(s.id);
-  if (!hs.find(h => h.id === ui.herId) && !(hero && hero.id === ui.herId)) ui.herId = hs[0] ? hs[0].id : hero ? hero.id : null;
-  const heroBtn = hero ? '<button type="button" class="who hero" data-her="' + hero.id + '" aria-current="' + (hero.id === ui.herId) + '">' + faceHtml(hero, 24) + '<b>' + esc(hero.name || 'Главный герой') + '<small>' + esc((hero.f || {}).role || 'главный герой') + '</small></b></button>'
-    : '<button type="button" class="who hero" data-act="new-hero"><b>+ Главный герой<small>профиль, витрина, арт</small></b></button>';
+  const heroes = herosOf(s.id), canHero = !heroes.length || (isClub(s) && heroes.length < 3);
+  if (!hs.find(h => h.id === ui.herId) && !heroes.some(x => x.id === ui.herId)) ui.herId = hs[0] ? hs[0].id : heroes[0] ? heroes[0].id : null;
+  const heroBtn = heroes.map(hero => '<button type="button" class="who hero" data-her="' + hero.id + '" aria-current="' + (hero.id === ui.herId) + '">' + faceHtml(hero, 24) + '<b>' + esc(hero.name || 'Главный герой') + '<small>' + esc((hero.f || {}).role || 'главный герой') + '</small></b></button>').join('') +
+    (canHero ? '<button type="button" class="who hero" data-act="new-hero"><b>+ ' + (isClub(s) ? 'Герой клуба' : 'Главный герой') + '<small>' + (isClub(s) ? 'до трёх: профиль, арт' : 'профиль, витрина, арт') + '</small></b></button>' : '');
   const list = hs.map(h => { return '<button type="button" class="who" data-her="' + h.id + '" aria-current="' + (h.id === ui.herId) + '">' + faceHtml(h, 24) + '<b>' + esc(h.name) + (isPreg(h) ? ' <span title="Беременна">🤰</span>' : '') + '</b><i class="st st-' + statOf(h) + '" title="' + STAT.find(x => x[0] === statOf(h))[1] + '"></i></button>'; }).join('');
   const h = edit && edit.id === ui.herId ? edit.data : herOf(ui.herId);
-  return '<div class="split"><aside class="side"><div class="row"><span class="lab">Персонажи · ' + (hs.length + (hero ? 1 : 0)) + '</span><span class="sp"></span><button class="btn ghost" data-act="new-her">+ Добавить</button></div><div class="list">' + heroBtn + list + '</div></aside>' +
+  return '<div class="split"><aside class="side"><div class="row"><span class="lab">Персонажи · ' + (hs.length + heroes.length) + '</span><span class="sp"></span><button class="btn ghost" data-act="new-her">+ Добавить</button></div><div class="list">' + heroBtn + list + '</div></aside>' +
     '<div style="min-width:0">' + (h ? (edit && edit.id === h.id ? renderSheetEdit(s, edit.data) : renderSheet(s, h)) : '<div class="card empty">Выберите героиню или добавьте новую.</div>') + '</div></div>';
 }
 const SECS = [['basics', 'Основное'], ['appearance', 'Внешность'], ['personality', 'Характер'], ['intimacy', 'Близость'], ['images', 'Для генерации'], ['extra', 'Дополнительно']];
@@ -5655,6 +5762,7 @@ function drawScenSettings() {
   openModal('<div class="dlg-head"><h2>' + (scenDraft.id ? 'Настройки сценария' : 'Новый сценарий') + '</h2><span class="sp"></span><button class="btn ghost" data-close>Отмена</button><button class="btn pri" data-act="scen-save">Сохранить</button></div><div class="dlg-body">' +
     '<label class="fld"><span class="lab">Название</span><input type="text" id="ss-name" value="' + esc(s.name) + '"></label>' +
     '<label class="fld"><span class="lab">Описание сценария</span><textarea id="ss-sum" rows="4">' + esc(s.summary || '') + '</textarea></label>' +
+    '<label class="fld"><span class="lab">Тип игры</span><select id="ss-kind"><option value="duty"' + (isClub(s) ? '' : ' selected') + '>Дежурства: журнал и лотерея</option><option value="club"' + (isClub(s) ? ' selected' : '') + '>Клуб: доска набора и индекс клуба, до трёх героев</option></select></label>' +
     '<div class="fld"><div class="row"><span class="lab">Поля анкеты: ключ, подпись, раздел, тип</span><span class="sp"></span><button class="btn ghost" data-act="ss-add-field">+ Поле</button></div><div style="display:grid;gap:6px" id="ss-fields">' +
     s.fields.map((f, i) => '<div class="tpl-f"><input type="text" data-sf="' + i + '" data-k="key" value="' + esc(f.key) + '" aria-label="Ключ"><input type="text" data-sf="' + i + '" data-k="label" value="' + esc(f.label) + '" aria-label="Подпись"><select data-sf="' + i + '" data-k="sec" aria-label="Раздел">' + secOpt(f.sec) + '</select><select data-sf="' + i + '" data-k="type" aria-label="Тип">' + typOpt(f.type) + '</select><button class="btn ghost" data-act="ss-del-field" data-i="' + i + '" aria-label="Убрать поле">×</button></div>').join('') + '</div></div>' +
     '<label class="fld"><span class="lab">Шкалы 1–5: по строке «ключ | название | коротко | 1; 2; 3; 4; 5»</span><textarea id="ss-scales" class="code" rows="5">' + esc((s.scales || []).map(x => [x.key, x.label, x.short || x.label, (x.values || []).join('; ')].join(' | ')).join('\n')) + '</textarea></label>' +
@@ -5666,7 +5774,7 @@ function drawScenSettings() {
 }
 function collectScen() {
   const s = scenDraft.data, m = $('modal'); if (!m) return;
-  s.name = $('ss-name').value.trim(); s.summary = $('ss-sum').value;
+  s.name = $('ss-name').value.trim(); s.summary = $('ss-sum').value; if ($('ss-kind')) s.kind = $('ss-kind').value === 'club' ? 'club' : 'duty';
   m.querySelectorAll('[data-sf]').forEach(el => { s.fields[+el.dataset.sf][el.dataset.k] = el.value.trim(); });
   s.dayTypes = s.dayTypes || []; m.querySelectorAll('[data-sdt]').forEach(el => { s.dayTypes[+el.dataset.sdt][el.dataset.k] = el.value.trim(); }); if ($('ss-cal0')) s.calStart = +$('ss-cal0').value; if ($('ss-calm')) { const nm = +$('ss-calm').value; s.calMonth = nm; }
   s.counters = s.counters || []; m.querySelectorAll('[data-sc]').forEach(el => { s.counters[+el.dataset.sc][el.dataset.k] = el.value.trim(); });
@@ -5742,7 +5850,7 @@ document.addEventListener('click', async e => {
     case 'edit-row': ui.herId = d.id; ui.scenTab = 'heroines'; edit = { id: d.id, data: clone(herOf(d.id)) }; saveUi(); render(); window.scrollTo(0, 0); break;
     case 'ref-up': { const h = herOf(ui.herId); refFor = ui.herId; refSlot = curOut(h); $('file-ref').click(); break; }
     case 'ref-del': { const h = herOf(ui.herId), k = curOut(h), key = h.id + ':' + k; if (refDel !== key) { refDel = key; render(); return; } refDel = null; const o = outfitsOf(h), r = o[k]; o[k] = null; if (await saveOutfits(h, o)) { try { await assets.delete(r.assetId); } catch (er) { /* уже удалён */ } toast('Арт убран'); } break; }
-    case 'new-hero': { if (heroOf(s.id)) break; const id = uid('hero'), doc = { id, scenarioId: s.id, isHero: true, name: '', handle: '', f: {}, showcase: [], meta: {} }; if (await write('heroines', id, doc)) { if (!herOf(id)) D.heroines.push(doc); ui.herId = id; ui.scenTab = 'heroines'; saveUi(); openHeroEdit(doc); } break; }
+    case 'new-hero': { const hc = herosOf(s.id).length; if (hc && !(isClub(s) && hc < 3)) break; const id = uid('hero'), doc = { id, scenarioId: s.id, isHero: true, n: hc + 1, name: '', handle: '', f: {}, showcase: [], meta: {} }; if (await write('heroines', id, doc)) { if (!herOf(id)) D.heroines.push(doc); ui.herId = id; ui.scenTab = 'heroines'; saveUi(); openHeroEdit(doc); } break; }
     case 'hero-edit': { const h = herOf(ui.herId); if (h) openHeroEdit(h); break; }
     case 'hero-save': { const h = herOf(d.id); if (!h) break; const v = id => ($(id).value || '').trim();
       if (await write('heroines', h.id, { name: v('he-name'), kanji: v('he-kanji'), kana: v('he-kana'), f: Object.assign({}, h.f || {}, { height: v('he-height'), role: v('he-role'), appearance: v('he-app'), note: v('he-note') }) }, true)) closeModal(); break; }
@@ -5764,6 +5872,11 @@ document.addEventListener('click', async e => {
     case 'mc-vw': mcRet = mcId; vw = { hid: mcId, sel: 'img:' + d.id }; holdRender = true; drawViewer(); break;
     case 'mc-mv': { const L = seatOrd(hersIn(s.id)), i = L.findIndex(h => h.id === mcId); if (L.length) openCard(L[(i + (+d.v) + L.length) % L.length].id); break; }
     case 'seat-mv': seatMv = seatMv ? null : { sid: s.id, pick: null }; render(); break;
+    case 'club-st': copy(clubSt4(s, hersIn(s.id)), b); break;
+    case 'club-tgt': { const n = Math.max(1, Math.min(99, clubInfo(s, hersIn(s.id)).target + (+d.v || 0))); await clubSave(s, { target: n }); break; }
+    case 'club-adj-add': { const t = ($('cb-t') || {}).value || '', v = Math.round(+(($('cb-v') || {}).value) || 0); if (!t.trim() || !v) { toast('Нужны описание и очки'); return; } const adj = clubInfo(s, hersIn(s.id)).adj.concat([{ id: uid('e'), t: t.trim().slice(0, 120), v, at: s.calToday || null }]); await clubSave(s, { adj }); break; }
+    case 'club-adj-del': await clubSave(s, { adj: clubInfo(s, hersIn(s.id)).adj.filter(x => x.id !== d.id) }); break;
+    case 'club-day': { const N = calLen(s), o0 = s.calToday ? calOrd(s, s.calToday) : s.calFirst ? calOrd(s, s.calFirst) : 0, o = s.calToday ? Math.max(0, Math.min(N - 1, o0 + (+d.v || 0))) : o0, k = keyAt(s, o); if (await write('scenarios', s.id, { calToday: k }, true)) { s.calToday = k; render(); } break; }
     case 'seat-pick': { if (!seatMv) break; if (!seatMv.pick || seatMv.pick === d.id) { seatMv.pick = seatMv.pick ? null : d.id; render(); break; }
       const L = seatOrd(hersIn(s.id)), i1 = L.findIndex(h => h.id === seatMv.pick), i2 = L.findIndex(h => h.id === d.id); if (i1 < 0 || i2 < 0) break;
       [L[i1], L[i2]] = [L[i2], L[i1]]; seatMv.pick = null; L.forEach((h, i) => { if (h.seat !== i) { h.seat = i; write('heroines', h.id, { seat: i }, true); } }); render(); break; }
@@ -5904,6 +6017,7 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'pher') { ui.pHer = t.value; saveUi(); render(); }
+  if (t.dataset && t.dataset.club) { const h = herOf(t.dataset.id); if (h) clubSet(h, t.dataset.club, t.dataset.club === 'note' ? t.value.trim().slice(0, 200) : t.value).then(() => { if (t.dataset.club !== 'note') render(); }); }
   if (t.dataset && t.dataset.outlabel != null) { const h = herOf(ui.herId); if (h) { const o = outfitsOf(h), k = +t.dataset.outlabel; if (o[k]) { o[k] = Object.assign({}, o[k], { label: t.value.trim().slice(0, 40) }); saveOutfits(h, o); } } }
   if (t.id === 'galher') { ui.galHer = t.value; saveUi(); render(); }
   if (t.dataset && t.dataset.gf) { ui.gf = Object.assign({}, ui.gf, { [t.dataset.gf]: t.value }); saveUi(); render(); }
@@ -5954,7 +6068,8 @@ function renderMini() {
   let box = document.getElementById('mini'); if (!box) { box = document.createElement('div'); box.id = 'mini'; document.body.appendChild(box); }
   const s = scen(); if (!s) { box.innerHTML = '<p class="mn-empty">Сценарий не загружен</p>'; return; }
   const T = todayInfo(s), o = T ? T.o : null, dk = T ? T.k : null;
-  const list = T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : [];
+  const club = typeof isClub === 'function' && isClub(s);
+  const list = club ? hersIn(s.id).filter(h => (h.club || {}).boy).map(h => ({ h, live: null })) : T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : [];
   const n = list.length, maxH = n > 1 ? 250 : 380;
   const card = ({ h, live }) => {
     const F = h.f || {}, ht = String(F.height || '').match(/\d{2,3}/), kg = String(F.weight || '').match(/\d+/);
@@ -5965,14 +6080,14 @@ function renderMini() {
       '<div class="mn-figbox">' + miniFig(h, 150, maxH) + '</div>' +
       '<div class="mn-info"><div class="mn-nm">' + hanko(h, true) + '<div><b>' + esc(h.nick || h.name) + '</b><small>' + esc(h.name || '') + '</small></div>' + (h.rating ? '<em class="mn-rt">' + h.rating + '</em>' : '') + '</div>' +
       (ph ? '<div class="mn-ph">' + ph + '</div>' : '') +
-      '<dl>' + rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + '<dt>Дежурств</dt><dd>' + duty + '</dd></dl>' +
+      '<dl>' + rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + (club ? '' : '<dt>Дежурств</dt><dd>' + duty + '</dd>') + '</dl>' +
       (live ? (live.arousal != null ? miniBar('♥', live.arousal) : '') + (live.composure != null ? miniBar('理', live.composure) : '') +
         '<div class="mn-live">' + [live.panties ? 'Бельё: ' + esc(live.panties) : '', live.creampies != null ? 'CP ×' + live.creampies : '', live.conception && live.conception !== '—' ? 'Зачатие: ' + esc(live.conception) : ''].filter(Boolean).map(x => '<span>' + x + '</span>').join('') + '</div>' : '') +
       '</div></article>';
   };
   const tl = T && T.t ? (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') : '';
   const head = dk ? '<header class="mn-hd"><b>' + dk.split('-')[0] + '月' + dk.split('-')[1] + '日</b><span>' + esc(tl) + '</span><a class="mn-full" href="#" title="Полный компаньон">⤢</a></header>' : '';
-  box.innerHTML = head + (list.length ? list.map(card).join('') : '<p class="mn-empty">На сегодня дежурных нет. Они появятся после лотереи или записи в журнал.</p>');
+  box.innerHTML = head + (list.length ? list.map(card).join('') : (club ? '<p class="mn-empty">Здесь появятся девушки, которыми занимается кто-то из героев: выберите героя на доске клуба.</p>' : '<p class="mn-empty">На сегодня дежурных нет. Они появятся после лотереи или записи в журнал.</p>'));
 }
 function setMini(on) { document.body.classList.toggle('mini', on); if (on) renderMini(); }
 window.addEventListener('hashchange', () => setMini(location.hash === '#mini'));
