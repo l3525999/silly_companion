@@ -16,7 +16,8 @@ function renderMini() {
   let box = document.getElementById('mini'); if (!box) { box = document.createElement('div'); box.id = 'mini'; document.body.appendChild(box); }
   const s = scen(); if (!s) { box.innerHTML = '<p class="mn-empty">Сценарий не загружен</p>'; return; }
   const T = todayInfo(s), o = T ? T.o : null, dk = T ? T.k : null;
-  const list = T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : [];
+  const club = typeof isClub === 'function' && isClub(s);
+  const list = club ? hersIn(s.id).filter(h => (h.club || {}).boy).map(h => ({ h, live: null })) : T ? T.her.map(id => ({ h: herOf(id), live: null })).filter(x => x.h) : [];
   const n = list.length, maxH = n > 1 ? 250 : 380;
   const card = ({ h, live }) => {
     const F = h.f || {}, ht = String(F.height || '').match(/\d{2,3}/), kg = String(F.weight || '').match(/\d+/);
@@ -27,14 +28,14 @@ function renderMini() {
       '<div class="mn-figbox">' + miniFig(h, 150, maxH) + '</div>' +
       '<div class="mn-info"><div class="mn-nm">' + hanko(h, true) + '<div><b>' + esc(h.nick || h.name) + '</b><small>' + esc(h.name || '') + '</small></div>' + (h.rating ? '<em class="mn-rt">' + h.rating + '</em>' : '') + '</div>' +
       (ph ? '<div class="mn-ph">' + ph + '</div>' : '') +
-      '<dl>' + rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + '<dt>Дежурств</dt><dd>' + duty + '</dd></dl>' +
+      '<dl>' + rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + (club ? '' : '<dt>Дежурств</dt><dd>' + duty + '</dd>') + '</dl>' +
       (live ? (live.arousal != null ? miniBar('♥', live.arousal) : '') + (live.composure != null ? miniBar('理', live.composure) : '') +
         '<div class="mn-live">' + [live.panties ? 'Бельё: ' + esc(live.panties) : '', live.creampies != null ? 'CP ×' + live.creampies : '', live.conception && live.conception !== '—' ? 'Зачатие: ' + esc(live.conception) : ''].filter(Boolean).map(x => '<span>' + x + '</span>').join('') + '</div>' : '') +
       '</div></article>';
   };
   const tl = T && T.t ? (T.t.emoji ? T.t.emoji + ' ' : '') + (T.t.label || '') : '';
   const head = dk ? '<header class="mn-hd"><b>' + dk.split('-')[0] + '月' + dk.split('-')[1] + '日</b><span>' + esc(tl) + '</span><a class="mn-full" href="#" title="Полный компаньон">⤢</a></header>' : '';
-  box.innerHTML = head + (list.length ? list.map(card).join('') : '<p class="mn-empty">На сегодня дежурных нет. Они появятся после лотереи или записи в журнал.</p>');
+  box.innerHTML = head + (list.length ? list.map(card).join('') : (club ? '<p class="mn-empty">Здесь появятся девушки, которыми занимается кто-то из героев: выберите героя на доске клуба.</p>' : '<p class="mn-empty">На сегодня дежурных нет. Они появятся после лотереи или записи в журнал.</p>'));
 }
 function setMini(on) { document.body.classList.toggle('mini', on); if (on) renderMini(); }
 window.addEventListener('hashchange', () => setMini(location.hash === '#mini'));
